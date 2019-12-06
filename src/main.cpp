@@ -86,7 +86,7 @@ void loop() {
         int code = atoi(token);
         sensor.isOk = (code == 0);
       }else{
-        volatile double* value;
+        volatile double* value = nullptr;
         switch(command){
           case 'O' : {
             value = &(sensor.ppO2);
@@ -105,7 +105,9 @@ void loop() {
             break;
           }
         }
-        *value = atof(token);
+        if(value != nullptr){
+          *value = atof(token);
+        }
       }
     }
     if (deviceConnected) {
