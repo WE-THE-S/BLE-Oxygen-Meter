@@ -93,10 +93,15 @@ void print_wakeup_reason() {
 
 	switch (wakeup_reason) {
     case ESP_SLEEP_WAKEUP_UNDEFINED : {
+	    u8g2.begin();
       ESP_LOGD(TAG, "BOOT");
       break;
     }
 		case ESP_SLEEP_WAKEUP_TIMER:{
+      u8g2.clearBuffer();
+      u8g2.setFont(u8g2_font_ncenB14_tr);
+      u8g2.drawStr(0,20, "Hello World!");
+      u8g2.sendBuffer();
 			ESP_LOGD(TAG, "Wakeup caused by timer");
 			break;
     }
@@ -166,7 +171,6 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 void setup() {
   const char* TAG = "Bluetooth";
 	sensor.isOk = false;
-	u8g2.begin();
 	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, SENSOR_TX_PIN);
   print_wakeup_reason();
 	readSensor();
