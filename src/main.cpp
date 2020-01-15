@@ -89,10 +89,10 @@ void readSensor(){
   recv.toLowerCase();
   recv = recv.substring(recv.indexOf('o'));
   char* temp = const_cast<char*>(recv.c_str());
-  Serial.println(temp);
+  ESP_LOGD(temp);
   char* token = strtok(temp, " ");
   while(token != NULL){
-    Serial.println(token);
+    ESP_LOGD(token);
     char command = token[0];
     token = strtok(NULL, " ");
     switch(command){
@@ -111,11 +111,11 @@ void readSensor(){
       }
       case 'p' : {
         float temp = atof(token);
-        Serial.println(temp);
+        ESP_LOGD(temp);
         sensor.barometric = static_cast<int16_t>(temp);
-        Serial.println(sensor.barometric);
+        ESP_LOGD(sensor.barometric);
         char* str = barray2hexstr((uint8_t*)&sensor.barometric, static_cast<size_t>(2));
-        Serial.println(str);
+        ESP_LOGD(str);
         delete[] str;
         break;
       }
@@ -143,27 +143,26 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 void setup() {
   sensor.isOk = false;
   u8g2.begin();
-  Serial.begin(115200);
   Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, SENSOR_TX_PIN);
   readSensor();
 
   if(!btStarted() && !btStart()){
-    Serial.println("BT STart Fail");
+    ESP_LOGD("BT Start Fail");
   }
   esp_bluedroid_status_t bt_state = esp_bluedroid_get_status();
   if(bt_state == ESP_BLUEDROID_STATUS_UNINITIALIZED){
     if (esp_bluedroid_init()) {
-      log_e("esp_bluedroid_init failed");
+      ESP_LOGD("init failed");
     }
   }
   if(bt_state != ESP_BLUEDROID_STATUS_ENABLED){
     if (esp_bluedroid_enable()) {
-      log_e("esp_bluedroid_enable failed");
+      ESP_LOGD("enable failed");
     }
   }
   //D000 0000CDCC A441 F7030000 EC
   char* hex = barray2hexstr(sensor.bytes, 14);
-  Serial.println(hex);
+  ESP_LOGD(hex);
   delete[] hex;
   esp_ble_gap_set_device_name("Oxygen Meter");
   adv_config.p_manufacturer_data = sensor.bytes;
@@ -171,7 +170,7 @@ void setup() {
   esp_ble_gap_config_adv_data(&adv_config);
   esp_ble_gap_register_callback(gap_handler);
   bootcount++;
-  Serial.println("Advertizing started...");
+  ESP_LOGD("Advertizing started...");
   delay(100);
   Serial.printf("enter deep sleep\n");
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
