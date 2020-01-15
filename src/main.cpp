@@ -162,7 +162,7 @@ void setup() {
     }
   }
   //D000 0000CDCC A441 F7030000 EC
-  char* hex = barray2hexstr(sensor.bytes, 13);
+  char* hex = barray2hexstr(sensor.bytes, 14);
   Serial.println(hex);
   delete[] hex;
   esp_ble_gap_set_device_name("Oxygen Meter");
