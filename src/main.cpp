@@ -109,9 +109,21 @@ void print_wakeup_reason() {
 			ESP_LOGD(TAG, "Wakeup was not caused by deep sleep: %d\n", wakeup_reason);
 			break;
 	}
-	u8g2.setFont(u8g2_font_ncenB14_tr);
-	u8g2.drawStr(0, 20, "Hello World!");
+	u8g2.setFont(u8g2_font_profont15_tr);
+	char* str = new char[16];
+	sprintf(str, "o2 : %f", sensor.o2);
+	u8g2.drawStr(0, 20, str);
+	memset(str, 0x00, 16);
+	sprintf(str, "temp : %f", sensor.temp);
+	u8g2.drawStr(0, 40, str);
+	memset(str, 0x00, 16);
+	sprintf(str, "ppo2 : %d", sensor.ppO2);
+	u8g2.drawStr(0, 60, str);
+	memset(str, 0x00, 16);
+	sprintf(str, "barometric : %d", sensor.barometric);
+	u8g2.drawStr(0, 80, str);
 	u8g2.sendBuffer();
+	delete[] str;
 }
 
 void readSensor() {
@@ -177,7 +189,6 @@ void setup() {
 
 	sensor.isOk = false;
 	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, SENSOR_TX_PIN);
-	print_wakeup_reason();
 	if (!btStarted() && !btStart()) {
 		ESP_LOGD(TAG, "BT Start Fail");
 	}
@@ -193,6 +204,7 @@ void setup() {
 		}
 	}
 	readSensor();
+	print_wakeup_reason();
 	//D000 0000CDCC A441 F7030000 EC
 	char *hex = barray2hexstr(sensor.bytes, 14);
 	ESP_LOGD(TAG, "%s", hex);
