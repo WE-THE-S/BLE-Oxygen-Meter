@@ -4,13 +4,13 @@
 #include <cstring>
 #include <esp_log.h>
 
+#include "driver/adc.h"
 #include "esp_bt.h"
-#include "esp_wifi.h"
 #include "esp_bt_defs.h"
 #include "esp_bt_main.h"
 #include "esp_gap_ble_api.h"
 #include "esp_gatts_api.h"
-#include "driver/adc.h"
+#include "esp_wifi.h"
 #include <U8g2lib.h>
 
 #ifdef U8X8_HAVE_HW_SPI
@@ -24,7 +24,7 @@
 #define mS_TO_S_FACTOR 1000
 #define TIME_TO_SLEEP 10
 
-U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/ 14, /* dc=*/ 5, /* reset=*/ 19);
 
 const int SENSOR_TX_PIN = 35;
 const int SENSOR_RX_PIN = 32;
@@ -54,8 +54,7 @@ esp_ble_adv_data_t adv_config = {
 	.p_service_data = NULL,
 	.service_uuid_len = 0,
 	.p_service_uuid = NULL,
-	.flag = (ESP_BLE_ADV_FLAG_NON_LIMIT_DISC)
-};
+	.flag = (ESP_BLE_ADV_FLAG_NON_LIMIT_DISC)};
 
 esp_ble_adv_params_t adv_param = {
 	.adv_int_min = 512,
@@ -88,36 +87,35 @@ char *barray2hexstr(uint8_t *data, size_t datalen) {
 	return chrs;
 }
 
-
 void print_wakeup_reason() {
-  const char* TAG = "WakeUpTag";
-  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
-  u8g2.begin();
+	const char *TAG = "WakeUpTag";
+	esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+
 	switch (wakeup_reason) {
-    case ESP_SLEEP_WAKEUP_UNDEFINED : {
-      ESP_LOGD(TAG, "BOOT");
-      break;
-    }
-		case ESP_SLEEP_WAKEUP_TIMER:{
-      u8g2.setFont(u8g2_font_ncenB14_tr);
-      u8g2.drawStr(0,20, "Hello World!");
-      u8g2.sendBuffer();
-      u8g2.setPowerSave(1);
+		case ESP_SLEEP_WAKEUP_UNDEFINED: {
+			ESP_LOGD(TAG, "BOOT");
+			u8g2.begin();
+			break;
+		}
+		case ESP_SLEEP_WAKEUP_TIMER: {
 			ESP_LOGD(TAG, "Wakeup caused by timer");
 			break;
-    }
-		case ESP_SLEEP_WAKEUP_ULP:{
+		}
+		case ESP_SLEEP_WAKEUP_ULP: {
 			ESP_LOGD(TAG, "Wakeup caused by ULP program");
 			break;
-    }
+		}
 		default:
 			ESP_LOGD(TAG, "Wakeup was not caused by deep sleep: %d\n", wakeup_reason);
 			break;
 	}
+	u8g2.setFont(u8g2_font_ncenB14_tr);
+	u8g2.drawStr(0, 20, "Hello World!");
+	u8g2.sendBuffer();
 }
 
 void readSensor() {
-  const char* TAG= "Sensor";
+	const char *TAG = "Sensor";
 	Serial2.setTimeout(2000);
 	String recv = Serial2.readStringUntil('\n');
 	recv.toLowerCase();
@@ -171,12 +169,12 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 
 void setup() {
 	adc_power_off();
-	const char* TAG = "Bluetooth";
+	const char *TAG = "Bluetooth";
 	ESP_LOGI("BootMode", "After Deep Sleep");
 	esp_wifi_deinit();
 	esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_N12);
 	esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
-	
+
 	sensor.isOk = false;
 	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, SENSOR_TX_PIN);
 	print_wakeup_reason();
