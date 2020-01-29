@@ -25,10 +25,12 @@
 #define TIME_TO_SLEEP 10
 
 U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/14, /* dc=*/5, /* reset=*/19);
-
+//U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/14, /* dc=*/5, /* reset=*/19);
 const int SENSOR_TX_PIN = 35;
 const int SENSOR_RX_PIN = 32;
-const int SENSOR_POWER_PIN = 13;
+const int BUZZER_PIN = 13;
+const int MOTOR_PIN = 15;
+
 typedef union {
 	struct {
 		float temp;
@@ -91,7 +93,6 @@ void print_wakeup_reason() {
 	const char *TAG = "WakeUpTag";
 	esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
 
-	u8g2.begin();
 	switch (wakeup_reason) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGD(TAG, "BOOT");
@@ -109,7 +110,8 @@ void print_wakeup_reason() {
 			ESP_LOGD(TAG, "Wakeup was not caused by deep sleep: %d\n", wakeup_reason);
 			break;
 	}
-	u8g2.setFont(u8g2_font_profont15_tr);
+	u8g2.begin();
+	u8g2.setFont(u8g2_font_profont17_tf);
 	char str[32] = {0, };
 	sprintf(str, "o2 : %.2f", sensor.o2);
 	u8g2.drawStr(0, 20, str);
@@ -122,6 +124,9 @@ void print_wakeup_reason() {
 	memset(str, 0x00, 16);
 	sprintf(str, "bar : %d", sensor.barometric);
 	u8g2.drawStr(0, 80, str);
+	memset(str, 0x00, 16);
+	sprintf(str, "isOk : %d", sensor.isOk);
+	u8g2.drawStr(0, 100, str);
 	u8g2.sendBuffer();
 }
 
@@ -179,9 +184,11 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 }
 
 void setup() {
-	pinMode(13, OUTPUT);
+	pinMode(BUZZER_PIN, OUTPUT);
+	pinMode(MOTOR_PIN, OUTPUT);
+	digitalWrite(MOTOR_PIN, HIGH);
 	ledcSetup(0, 1E5, 12);
-	ledcAttachPin(13, 0);
+	ledcAttachPin(BUZZER_PIN, 0);
 	ledcWrite(0, 0);
 	ledcWriteTone(0, 2048);
 
@@ -220,7 +227,6 @@ void setup() {
 	esp_ble_gap_config_adv_data(&adv_config);
 	esp_ble_gap_register_callback(gap_handler);
 	ESP_LOGD(TAG, "Advertizing started...");
-	digitalWrite(SENSOR_POWER_PIN, LOW);
 	ESP_LOGD(TAG, "enter deep sleep");
 	esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
 	esp_deep_sleep_start();
