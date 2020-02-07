@@ -98,6 +98,14 @@ void print_wakeup_reason() {
 			ESP_LOGD(TAG, "BOOT");
 			break;
 		}
+		case ESP_SLEEP_WAKEUP_EXT0: {
+			ESP_LOGD(TAG, "Wakeup caused by external signal using RTC_IO");
+			break;
+		}
+		case ESP_SLEEP_WAKEUP_EXT1: {
+			ESP_LOGD(TAG, "Wakeup caused by external signal using RTC_CNTL");
+			break;
+		}
 		case ESP_SLEEP_WAKEUP_TIMER: {
 			ESP_LOGD(TAG, "Wakeup caused by timer");
 			break;
@@ -109,7 +117,7 @@ void print_wakeup_reason() {
 		default:
 			ESP_LOGD(TAG, "Wakeup was not caused by deep sleep: %d\n", wakeup_reason);
 			break;
-	}
+}
 	u8g2.begin();
 	u8g2.setFont(u8g2_font_profont17_tf);
 	char str[32] = {0, };
@@ -132,7 +140,6 @@ void print_wakeup_reason() {
 
 void readSensor() {
 	const char *TAG = "Sensor";
-	Serial2.setTimeout(2000);
 	String recv = Serial2.readStringUntil('\n');
 	recv.toLowerCase();
 	recv = recv.substring(recv.indexOf('o'));
@@ -184,13 +191,10 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 }
 
 void setup() {
+	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, SENSOR_TX_PIN);
+	Serial2.setTimeout(2000);
 	pinMode(BUZZER_PIN, OUTPUT);
 	pinMode(MOTOR_PIN, OUTPUT);
-	digitalWrite(MOTOR_PIN, HIGH);
-	ledcSetup(0, 1E5, 12);
-	ledcAttachPin(BUZZER_PIN, 0);
-	ledcWrite(0, 0);
-	ledcWriteTone(0, 2048);
 
 	adc_power_off();
 	const char *TAG = "Bluetooth";
@@ -200,7 +204,15 @@ void setup() {
 	esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
 
 	sensor.isOk = false;
-	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, SENSOR_TX_PIN);
+	readSensor();
+	print_wakeup_reason();
+	/*
+	//D000 0000CDCC A441 F7030000 EC
+	digitalWrite(MOTOR_PIN, HIGH);
+	ledcSetup(0, 1E5, 12);
+	ledcAttachPin(BUZZER_PIN, 0);
+	ledcWrite(0, 0);
+	ledcWriteTone(0, 2048);
 	if (!btStarted() && !btStart()) {
 		ESP_LOGD(TAG, "BT Start Fail");
 	}
@@ -215,9 +227,6 @@ void setup() {
 			ESP_LOGD(TAG, "enable failed");
 		}
 	}
-	readSensor();
-	print_wakeup_reason();
-	//D000 0000CDCC A441 F7030000 EC
 	char *hex = barray2hexstr(sensor.bytes, 14);
 	ESP_LOGD(TAG, "%s", hex);
 	delete[] hex;
@@ -227,6 +236,7 @@ void setup() {
 	esp_ble_gap_config_adv_data(&adv_config);
 	esp_ble_gap_register_callback(gap_handler);
 	ESP_LOGD(TAG, "Advertizing started...");
+	*/
 	ESP_LOGD(TAG, "enter deep sleep");
 	esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
 	esp_deep_sleep_start();
