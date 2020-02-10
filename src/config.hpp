@@ -24,13 +24,13 @@ const uint64_t uS_TO_S_FACTOR = 1000;
 const uint64_t mS_TO_S_FACTOR = 1000 * 1000;
 
 //핀 정보 상수들
-const int SENSOR_RX_PIN = GPIO_NUM_35;
-const int POWER_HOLD_PIN = GPIO_NUM_32;
+const gpio_num_t SENSOR_RX_PIN = GPIO_NUM_35;
+const gpio_num_t POWER_HOLD_PIN = GPIO_NUM_32;
 const uint64_t FUNCTION_BUTTON_PIN = BIT64(GPIO_NUM_34);
 const gpio_num_t POWER_BUTTON_PIN = GPIO_NUM_33;
-const int BUZZER_PIN = GPIO_NUM_13;
-const int MOTOR_PIN = GPIO_NUM_15;
-const int NOT_USED_PIN = GPIO_NUM_39;
+const gpio_num_t BUZZER_PIN = GPIO_NUM_13;
+const gpio_num_t MOTOR_PIN = GPIO_NUM_15;
+const gpio_num_t NOT_USED_PIN = GPIO_NUM_39;
 
 const gpio_num_t OLED_CS_PIN = GPIO_NUM_14;
 const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;
@@ -39,4 +39,5 @@ const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 const BaseType_t BUTTON_TASK_CORE_ID = 0;
 const BaseType_t SENSOR_TASK_CORE_ID = 1;
 
+const int LONG_PRESS_THRSHOLD = 2 * uS_TO_S_FACTOR;
 #endif

@@ -27,7 +27,10 @@ typedef enum {
 	PPO2,
 	BAR,
 	HEALTH_CHECK,
-	BATTERY
+	BATTERY,
+
+	FIRST = O2,
+	LAST = BATTERY
 } oled_menu_t;
  typedef struct {
 	task_status_t sensorTaskStatus;

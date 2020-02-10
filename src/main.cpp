@@ -40,6 +40,7 @@ void setup() {
 			Communication comm;
 			comm.begin();
 			comm.readSensor(&status.sensor);
+			lcd.begin();
 			lcd.print();
 			status.sensorTaskStatus = RUNNING;
 
