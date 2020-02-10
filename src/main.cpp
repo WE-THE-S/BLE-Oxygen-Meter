@@ -27,12 +27,9 @@ void setup() {
 	U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
 
 	LCD lcd(&u8g2, &status);
-	TaskHandle_t buttonTaskHandle, sensorTaskHandle;
+	TaskHandle_t buttonTaskHandle;
 	ESP_LOGI("Button Task", "Execute");
 	xTaskCreatePinnedToCore(__button_task, "button", 4096, &lcd, 1, &buttonTaskHandle, BUTTON_TASK_CORE_ID);
-	if(status.wakeCount != 1){
-		status.wakeCount++;
-	}
 	pinMode(BUZZER_PIN, OUTPUT);
 	pinMode(MOTOR_PIN, OUTPUT);
 	while(status.buttonTaskStatus != FINISH){
@@ -68,7 +65,11 @@ void setup() {
 		}
 	}
 	vTaskDelete(buttonTaskHandle);
-	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(2 * mS_TO_S_FACTOR));
+	if(status.alarmEnable){
+		ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(EMERGENCY_SLEEP_TIME * mS_TO_S_FACTOR));
+	}else{
+		ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(NORMAL_SLEEP_TIME * mS_TO_S_FACTOR));
+	}
 	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, 1));
 	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
 

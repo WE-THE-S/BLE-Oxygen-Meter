@@ -19,7 +19,8 @@
 #endif
 
 //타이머 계산용 상수
-const uint64_t TIME_TO_SLEEP = 10;
+const uint64_t NORMAL_SLEEP_TIME = 10;
+const uint64_t EMERGENCY_SLEEP_TIME = 10;
 const uint64_t uS_TO_S_FACTOR = 1000;
 const uint64_t mS_TO_S_FACTOR = 1000 * 1000;
 

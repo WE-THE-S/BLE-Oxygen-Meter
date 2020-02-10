@@ -32,11 +32,12 @@ typedef enum {
 	FIRST = O2,
 	LAST = BATTERY
 } oled_menu_t;
+
  typedef struct {
 	task_status_t sensorTaskStatus;
 	task_status_t buttonTaskStatus;
 	//얼마나 깨어났는지
-	int wakeCount;
+	bool alarmEnable;
 	sensor_t sensor;
 	oled_menu_t menu;
 } device_status_t;

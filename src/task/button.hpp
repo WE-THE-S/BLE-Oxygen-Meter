@@ -32,7 +32,7 @@ static void __button_task(void *argv) {
 		case ESP_SLEEP_WAKEUP_EXT1: {
 			int time = pulseIn(FUNCTION_BUTTON_PIN, HIGH);
 			if (time > LONG_PRESS_THRSHOLD) {
-				
+				lcd->status->alarmEnable = !lcd->status->alarmEnable;
 			}else{
 				if(lcd->status->menu != oled_menu_t::LAST){
 					lcd->status->menu = static_cast<oled_menu_t>(static_cast<int>(lcd->status->menu) + 1);
@@ -54,6 +54,7 @@ static void __button_task(void *argv) {
 		}
 	}
 	lcd->status->buttonTaskStatus = FINISH;
+	while(true);
 }
 
 #endif
