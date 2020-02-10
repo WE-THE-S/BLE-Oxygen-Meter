@@ -19,25 +19,54 @@
 //계속 유지되야 하는 데이터들
 //디바이스 정보
 RTC_DATA_ATTR device_status_t status;
-//LCD 인스턴스
-U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
-
-LCD lcd(&u8g2, &status);
 void setup() {
-	auto buttonTask = new ButtonTask();
-	auto sensorTask = new SensorTask();
+	status.buttonTaskStatus = INIT;
+	status.sensorTaskStatus = INIT;
+	ESP_LOGI("Main", "Wakeup");
+	//LCD 인스턴스
+	U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
+
+	LCD lcd(&u8g2, &status);
+	TaskHandle_t buttonTaskHandle, sensorTaskHandle;
+	ESP_LOGI("Button Task", "Execute");
+	xTaskCreatePinnedToCore(__button_task, "button", 4096, &lcd, 1, &buttonTaskHandle, BUTTON_TASK_CORE_ID);
 	if(status.wakeCount != 1){
 		status.wakeCount++;
 	}
-	lcd.begin();
-	lcd.print();
 	pinMode(BUZZER_PIN, OUTPUT);
 	pinMode(MOTOR_PIN, OUTPUT);
-	buttonTask->execute(&status);
-	sensorTask->execute(&status);
-	while(status.buttonTaskStatus != FINISH && status.sensorTaskStatus != FINISH){
+	while(status.buttonTaskStatus != FINISH){
+		if(status.sensorTaskStatus != FINISH){
+			Communication comm;
+			comm.begin();
+			comm.readSensor(&status.sensor);
+			lcd.print();
+			status.sensorTaskStatus = RUNNING;
 
+			switch (esp_sleep_get_wakeup_cause()) {
+				case ESP_SLEEP_WAKEUP_UNDEFINED: {
+					break;
+				}
+				case ESP_SLEEP_WAKEUP_EXT0: {
+					break;
+				}
+				case ESP_SLEEP_WAKEUP_EXT1: {
+					break;
+				}
+				case ESP_SLEEP_WAKEUP_TIMER: {
+					break;
+				}
+				case ESP_SLEEP_WAKEUP_ULP: {
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+			status.sensorTaskStatus = FINISH;
+		}
 	}
+	vTaskDelete(buttonTaskHandle);
 	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(2 * mS_TO_S_FACTOR));
 	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(GPIO_NUM_33, 1));
 	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(GPIO_NUM_34), ESP_EXT1_WAKEUP_ANY_HIGH));

@@ -1,16 +1,5 @@
 #include "./communication.hpp"
 
-void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
-	switch (event) {
-		case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT: {
-			esp_ble_gap_start_advertising(&adv_param);
-			break;
-		}
-		default:
-			break;
-	}
-}
-
 esp_err_t Communication::broadcast(sensor_t *sensor) {
 	if (!btStarted() && !btStart()) {
 		ESP_LOGD(TAG, "BT Start Fail");
