@@ -46,14 +46,15 @@ private:
 
 public:
 	void begin() {
-		//31은 암거나 넣은거
-		Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, 31);
+        //TX 핀은 사용 안함
+        Serial.begin(115200);
+		Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
 		Serial2.setTimeout(2000);
 		adc_power_off();
 		esp_wifi_deinit();
 		esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_N12);
 		esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
-		ESP_LOGD(TAG, "Advertizing started...");
+		ESP_LOGD(TAG, "Advertising Init");
 	}
 	esp_err_t broadcast(sensor_t *sensor);
 	esp_err_t readSensor(sensor_t *sensor);

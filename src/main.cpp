@@ -24,15 +24,16 @@ RTC_DATA_ATTR sensor_t sensor;
 //디바이스 정보
 RTC_DATA_ATTR device_status_t status;
 
-void setup() {
-	status.wakeCount++;
-	LCD lcd(&u8g2);
+Communication comm;
+LCD lcd(&u8g2);
+
+void setup() {;
+	comm.begin();
+	comm.readSensor(&sensor);
+	if(status.wakeCount != 1){
+		status.wakeCount++;
+	}
 	lcd.begin();
-	randomSeed(analogRead(0));
-	sensor.barometric = random(2000);
-	sensor.temp = (float)random(100000) / 100.0;
-	sensor.o2 = (float)random(100000) / 100.0;
-	sensor.ppO2 = random(1000);
 	lcd.print(&sensor);
 	pinMode(BUZZER_PIN, OUTPUT);
 	pinMode(MOTOR_PIN, OUTPUT);

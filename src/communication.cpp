@@ -35,12 +35,13 @@ esp_err_t Communication::broadcast(sensor_t *sensor) {
 }
 
 esp_err_t Communication::readSensor(sensor_t *sensor) {
+    while(!Serial2.available());
 	String recv = Serial2.readStringUntil('\n');
 	if (recv.length() > 5) {
 		recv.toLowerCase();
 		recv = recv.substring(recv.indexOf('o'));
 		char *temp = const_cast<char *>(recv.c_str());
-		Serial.println(recv);
+		ESP_LOGD(this->TAG, "%s", recv.c_str());
 		char *token = strtok(temp, " ");
 		while (token != NULL) {
 			//ESP_LOGD(TAG, "%s", token);

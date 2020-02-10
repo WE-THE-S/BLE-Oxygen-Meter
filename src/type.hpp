@@ -14,7 +14,7 @@ typedef union {
 	uint8_t bytes[];
 } sensor_t;
 
-typedef enum { INIT, RUNNING, FINNISH } task_status_t;
+typedef enum { INIT, RUNNING, FINISH } task_status_t;
 typedef struct {
 	task_status_t sensorTaskStatus;
 	task_status_t buttonTaskStatus;

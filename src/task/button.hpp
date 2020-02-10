@@ -7,10 +7,9 @@
 class ButtonTask : public ITask {
 public:
 	void execute() {
+		*(this->status) = RUNNING;
 
-		esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
-
-		switch (wakeup_reason) {
+		switch (esp_sleep_get_wakeup_cause()) {
 			case ESP_SLEEP_WAKEUP_UNDEFINED: {
 				break;
 			}
@@ -26,9 +25,11 @@ public:
 			case ESP_SLEEP_WAKEUP_ULP: {
 				break;
 			}
-			default:
+			default: {
 				break;
+			}
 		}
+		*(this->status) = FINISH;
 	}
 };
 
