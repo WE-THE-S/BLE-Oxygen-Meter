@@ -14,4 +14,12 @@ typedef union {
 	uint8_t bytes[];
 } sensor_t;
 
+typedef enum { INIT, RUNNING, FINNISH } task_status_t;
+typedef struct {
+	task_status_t sensor;
+	task_status_t button;
+	//얼마나 깨어났는지
+	int wake_count;
+} device_status_t;
+
 #endif

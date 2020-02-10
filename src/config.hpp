@@ -2,6 +2,14 @@
 #define __CONFIG_HPP__
 
 #include <U8g2lib.h>
+#include <inttypes.h>
+#include "./type.hpp"
+
+#include "esp_bt.h"
+#include "esp_bt_defs.h"
+#include "esp_bt_main.h"
+#include "esp_gap_ble_api.h"
+#include "esp_gatts_api.h"
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -9,21 +17,18 @@
 #ifdef U8X8_HAVE_HW_I2C
 #include <Wire.h>
 #endif
-#include "./type.hpp"
 
-#define uS_TO_S_FACTOR 1000 * 1000
-#define mS_TO_S_FACTOR 1000
-#define TIME_TO_SLEEP 10
+//타이머 계산용 상수
+const uint64_t TIME_TO_SLEEP = 10;
+const uint64_t uS_TO_S_FACTOR = 1000;
+const uint64_t mS_TO_S_FACTOR = 1000 * 1000;
 
-const int SENSOR_RX_PIN = 32;
-const int POWER_HOLD_PIN = 35;
-const int FUNCTION_BUTTON_PIN = 34;
-const int POWER_BUTTON_PIN = 33;
-const int BUZZER_PIN = 13;
-const int MOTOR_PIN = 15;
-
-RTC_DATA_ATTR U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/14, /* dc=*/5, /* reset=*/19);
-RTC_DATA_ATTR sensor_t sensor;
-RTC_DATA_ATTR int wake_count;
+//핀 정보 상수들
+const int SENSOR_RX_PIN = GPIO_NUM_32;
+const int POWER_HOLD_PIN = GPIO_NUM_35;
+const uint64_t FUNCTION_BUTTON_PIN = BIT64(GPIO_NUM_34);
+const gpio_num_t POWER_BUTTON_PIN = GPIO_NUM_33;
+const int BUZZER_PIN = GPIO_NUM_13;
+const int MOTOR_PIN = GPIO_NUM_15;
 
 #endif
