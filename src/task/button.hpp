@@ -39,6 +39,7 @@ static void __button_task(void *argv) {
 				}else{
 					lcd->status->menu = oled_menu_t::FIRST;
 				}
+				lcd->print();
 			}
 			break;
 		}
@@ -52,9 +53,7 @@ static void __button_task(void *argv) {
 			break;
 		}
 	}
-	status->buttonTaskStatus = FINISH;
-	while (true)
-		;
+	lcd->status->buttonTaskStatus = FINISH;
 }
 
 #endif

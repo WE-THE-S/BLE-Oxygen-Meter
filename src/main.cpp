@@ -69,8 +69,8 @@ void setup() {
 	}
 	vTaskDelete(buttonTaskHandle);
 	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(2 * mS_TO_S_FACTOR));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(GPIO_NUM_33, 1));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(GPIO_NUM_34), ESP_EXT1_WAKEUP_ANY_HIGH));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, 1));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
 
 	esp_deep_sleep_start();
 }

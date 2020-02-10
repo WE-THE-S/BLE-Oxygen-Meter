@@ -26,7 +26,7 @@ const uint64_t mS_TO_S_FACTOR = 1000 * 1000;
 //핀 정보 상수들
 const gpio_num_t SENSOR_RX_PIN = GPIO_NUM_35;
 const gpio_num_t POWER_HOLD_PIN = GPIO_NUM_32;
-const uint64_t FUNCTION_BUTTON_PIN = BIT64(GPIO_NUM_34);
+const gpio_num_t FUNCTION_BUTTON_PIN = GPIO_NUM_34;
 const gpio_num_t POWER_BUTTON_PIN = GPIO_NUM_33;
 const gpio_num_t BUZZER_PIN = GPIO_NUM_13;
 const gpio_num_t MOTOR_PIN = GPIO_NUM_15;
