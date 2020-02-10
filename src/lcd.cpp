@@ -11,6 +11,22 @@ void LCD::print() {
 			sprintf(str, "%.2f%%", this->status->sensor.o2);
 			break;
 		}
+		case PPO2 : {
+			sprintf(str, "%d", this->status->sensor.ppO2);
+			break;
+		}
+		case BAR : {
+			sprintf(str, "%d", this->status->sensor.barometric);
+			break;
+		}
+		case TEMP : {
+			sprintf(str, "%.2f%%", this->status->sensor.temp);
+			break;
+		}
+		case BATTERY : {
+			sprintf(str, "%.2f%%", this->status->sensor.temp);
+			break;
+		}
 		default: {
 			sprintf(str, "test");
 			break;

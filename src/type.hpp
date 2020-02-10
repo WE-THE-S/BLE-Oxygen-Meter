@@ -26,7 +26,6 @@ typedef enum {
 	TEMP,
 	PPO2,
 	BAR,
-	HEALTH_CHECK,
 	BATTERY,
 
 	FIRST = O2,
