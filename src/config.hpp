@@ -32,6 +32,7 @@ const gpio_num_t POWER_BUTTON_PIN = GPIO_NUM_33;
 const gpio_num_t BUZZER_PIN = GPIO_NUM_13;
 const gpio_num_t MOTOR_PIN = GPIO_NUM_15;
 const gpio_num_t NOT_USED_PIN = GPIO_NUM_39;
+const gpio_num_t BATTERY_ADC_PIN = GPIO_NUM_25;
 
 const gpio_num_t OLED_CS_PIN = GPIO_NUM_14;
 const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;

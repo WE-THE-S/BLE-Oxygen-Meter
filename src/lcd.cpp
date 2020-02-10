@@ -40,4 +40,5 @@ void LCD::print() {
 	this->u8g2->setFont(u8g2_font_open_iconic_all_4x_t);
 	this->u8g2->drawGlyph(5, 40, 0x79 - (this->status->sensor.isOk));
 	this->u8g2->updateDisplay();
+	while(this->u8g2->nextPage());
 }
