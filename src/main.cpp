@@ -22,14 +22,22 @@ RTC_DATA_ATTR U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/14, /* d
 //센서 데이터
 RTC_DATA_ATTR sensor_t sensor;
 //디바이스 정보
-RTC_DATA_ATTR device_status_t deviceStatus;
+RTC_DATA_ATTR device_status_t status;
 
 void setup() {
+	status.wakeCount++;
 	LCD lcd(&u8g2);
+	lcd.begin();
+	randomSeed(analogRead(0));
+	sensor.barometric = random(2000);
+	sensor.temp = (float)random(100000) / 100.0;
+	sensor.o2 = (float)random(100000) / 100.0;
+	sensor.ppO2 = random(1000);
+	lcd.print(&sensor);
 	pinMode(BUZZER_PIN, OUTPUT);
 	pinMode(MOTOR_PIN, OUTPUT);
-	ESP_LOGD(TAG, "enter deep sleep");
-	esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+	ESP_LOGD(TAG, "enter deep sleep %d", status.wakeCount);
+	esp_sleep_enable_timer_wakeup(2 * mS_TO_S_FACTOR);
 	esp_deep_sleep_start();
 }
 

@@ -16,10 +16,10 @@ typedef union {
 
 typedef enum { INIT, RUNNING, FINNISH } task_status_t;
 typedef struct {
-	task_status_t sensor;
-	task_status_t button;
+	task_status_t sensorTaskStatus;
+	task_status_t buttonTaskStatus;
 	//얼마나 깨어났는지
-	int wake_count;
+	int wakeCount;
 } device_status_t;
 
 #endif
