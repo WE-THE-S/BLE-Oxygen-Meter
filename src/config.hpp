@@ -32,4 +32,8 @@ const int BUZZER_PIN = GPIO_NUM_13;
 const int MOTOR_PIN = GPIO_NUM_15;
 const int NOT_USED_PIN = GPIO_NUM_39;
 
+const gpio_num_t OLED_CS_PIN = GPIO_NUM_14;
+const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;
+const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
+
 #endif

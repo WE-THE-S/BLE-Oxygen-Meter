@@ -1,7 +1,8 @@
 #ifndef __TYPE_HPP__
 #define __TYPE_HPP__
-#include <inttypes.h>
 #include <Arduino.h>
+#include <U8g2lib.h>
+#include <inttypes.h>
 
 typedef union {
 	struct {
@@ -14,12 +15,28 @@ typedef union {
 	uint8_t bytes[];
 } sensor_t;
 
-typedef enum { INIT, RUNNING, FINISH } task_status_t;
-typedef struct {
+typedef enum {
+	INIT,
+	RUNNING,
+	PENDING,
+	FINISH
+} task_status_t;
+
+typedef enum {
+	O2,
+	TEMP,
+	PPO2,
+	BAR,
+	HEALTH_CHECK,
+	BATTERY
+} oled_menu_t;
+ typedef struct {
 	task_status_t sensorTaskStatus;
 	task_status_t buttonTaskStatus;
 	//얼마나 깨어났는지
 	int wakeCount;
+	sensor_t sensor;
+	oled_menu_t menu;
 } device_status_t;
 
 #endif

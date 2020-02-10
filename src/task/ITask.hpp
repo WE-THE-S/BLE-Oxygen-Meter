@@ -11,7 +11,7 @@ public:
 	ITask(task_status_t *_status) : status(_status) {
         *(this->status) = INIT;
 	};
-	virtual void execute();
+	virtual void execute(void*);
 };
 
 #endif
