@@ -4,13 +4,7 @@
 #include "../type.hpp"
 
 class ITask {
-protected:
-	task_status_t *status;
-
 public:
-	ITask(task_status_t *_status) : status(_status) {
-        *(this->status) = INIT;
-	};
 	virtual void execute(void*);
 };
 

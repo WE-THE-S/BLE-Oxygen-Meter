@@ -18,7 +18,6 @@ typedef union {
 typedef enum {
 	INIT,
 	RUNNING,
-	PENDING,
 	FINISH
 } task_status_t;
 

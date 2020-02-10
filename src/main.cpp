@@ -24,8 +24,8 @@ U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/O
 
 LCD lcd(&u8g2, &status);
 void setup() {
-	ITask* buttonTask = new ButtonTask(&status.buttonTaskStatus);
-	ITask* sensorTask = new SensorTask(&status.buttonTaskStatus);
+	auto buttonTask = new ButtonTask();
+	auto sensorTask = new SensorTask();
 	if(status.wakeCount != 1){
 		status.wakeCount++;
 	}
@@ -33,8 +33,8 @@ void setup() {
 	lcd.print();
 	pinMode(BUZZER_PIN, OUTPUT);
 	pinMode(MOTOR_PIN, OUTPUT);
-	xTaskCreatePinnedToCore(buttonTask->execute, "button", 4096, NULL, 1, NULL, 0);
-	xTaskCreatePinnedToCore(sensorTask->execute, "sensor", 4096, &status.sensor, 1, NULL, 1);
+	buttonTask->execute(&status);
+	sensorTask->execute(&status);
 	while(status.buttonTaskStatus != FINISH && status.sensorTaskStatus != FINISH){
 
 	}

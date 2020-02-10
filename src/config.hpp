@@ -36,4 +36,7 @@ const gpio_num_t OLED_CS_PIN = GPIO_NUM_14;
 const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;
 const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 
+const BaseType_t BUTTON_TASK_CORE_ID = 0;
+const BaseType_t SENSOR_TASK_CORE_ID = 1;
+
 #endif
