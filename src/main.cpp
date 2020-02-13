@@ -1,4 +1,3 @@
-#include "./communication.hpp"
 #include "./config.hpp"
 #include "./lcd.hpp"
 #include "./task/button.hpp"
@@ -29,17 +28,51 @@ void setup() {
 	pinMode(MOTOR_PIN, OUTPUT);
 	status.buttonTaskStatus = INIT;
 	status.sensorTaskStatus = INIT;
-	ESP_LOGI("Main", "Wakeup");
+	if(status.wakeupCount == UINT8_MAX){
+		status.wakeupCount = 0;
+	}else{
+		status.wakeupCount++;
+	}
+	
+	ESP_LOGI("Main", "Wakeup Count %u", status.wakeupCount);
 	//LCD 인스턴스
 	U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
 
 	LCD lcd(&u8g2, &status);
+	lcd.begin();
 	ESP_LOGI("Button Task", "Execute");
 	//tskIDLE_PRIORITY
 	xTaskCreatePinnedToCore(__sensor_task, "sensor", 4096, &lcd, 1, NULL, SENSOR_TASK_CORE_ID);
 	xTaskCreatePinnedToCore(__button_task, "button", 4096, &lcd, 1, NULL, BUTTON_TASK_CORE_ID);
-	while(status.buttonTaskStatus != FINISH && status.sensorTaskStatus != FINISH){
-		//ESP_LOGI("wait task", "Wait task");
+	bool alreadyRun = false;
+	while (status.buttonTaskStatus != FINISH && status.sensorTaskStatus != FINISH) {
+		if (lcd.status->alarmEnable) {
+			if (!alreadyRun) {
+				BLE ble;
+				ble.begin();
+				ble.broadcast(&(lcd.status->sensor));
+				rtc_gpio_hold_dis(MOTOR_PIN);
+				rtc_gpio_init(MOTOR_PIN);
+				rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
+				rtc_gpio_set_level(MOTOR_PIN, lcd.status->wakeupCount & 1 ? HIGH : LOW);
+				gpio_hold_en(MOTOR_PIN);
+
+				ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
+				ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+				for (int i = 0; i < 6; i++) {
+					ledcWrite(BUZZER_CHANNEL, (i & 1) ? BUZZER_ON : BUZZER_OFF);
+					delay(100);
+				}
+				ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
+				alreadyRun = true;
+			}
+		}else{
+			rtc_gpio_hold_dis(MOTOR_PIN);
+			rtc_gpio_init(MOTOR_PIN);
+			rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
+			rtc_gpio_set_level(MOTOR_PIN, LOW);
+			gpio_hold_en(MOTOR_PIN);
+		}
 		lcd.print();
 	}
 	if (lcd.status->alarmEnable) {

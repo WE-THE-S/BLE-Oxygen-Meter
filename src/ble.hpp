@@ -1,5 +1,5 @@
-#ifndef __COMMUNICATION_HPP__
-#define __COMMUNICATION_HPP__
+#ifndef __BLE_HPP__
+#define __BLE_HPP__
 
 #include "./config.hpp"
 #include "./type.hpp"
@@ -49,17 +49,13 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 			break;
 	}
 }
-class Communication {
+class BLE {
 private:
 	//9A99D541 B81E9341 01 00B2 00F7
-	const char *TAG = "Communication";
+	const char *TAG = "BLE";
 
 public:
 	void begin() {
-        //TX 핀은 사용 안함
-        Serial.begin(115200);
-		Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
-		Serial2.setTimeout(2000);
 		adc_power_off();
 		esp_wifi_deinit();
 		esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_N12);
@@ -67,7 +63,6 @@ public:
 		ESP_LOGD(TAG, "Advertising Init");
 	}
 	esp_err_t broadcast(sensor_t *sensor);
-	esp_err_t readSensor(sensor_t *sensor);
 };
 
 #endif

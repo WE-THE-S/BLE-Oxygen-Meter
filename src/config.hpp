@@ -19,8 +19,8 @@
 #endif
 
 //타이머 계산용 상수
-const uint64_t NORMAL_SLEEP_TIME = 10;
-const uint64_t EMERGENCY_SLEEP_TIME = 10;
+const uint64_t NORMAL_SLEEP_TIME = 5;
+const uint64_t EMERGENCY_SLEEP_TIME = 1;
 const uint64_t uS_TO_S_FACTOR = 1000;
 const uint64_t mS_TO_S_FACTOR = 1000 * 1000;
 
@@ -41,5 +41,10 @@ const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 const BaseType_t BUTTON_TASK_CORE_ID = 0;
 const BaseType_t SENSOR_TASK_CORE_ID = 1;
 
-const int LONG_PRESS_THRSHOLD = 2 * uS_TO_S_FACTOR;
+const uint32_t BUZZER_FREQ = 2048;
+const uint32_t BUZZER_CHANNEL = 0;
+const uint32_t BUZZER_RESOLUTION = 8;
+const uint32_t BUZZER_ON = 128;
+const uint32_t BUZZER_OFF = 0;
+
 #endif

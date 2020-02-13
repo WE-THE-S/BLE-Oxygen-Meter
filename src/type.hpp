@@ -27,6 +27,7 @@ typedef enum {
 	//얼마나 깨어났는지
 	bool alarmEnable;
 	bool powerOn;
+	uint8_t wakeupCount;
 	sensor_t sensor;
 } device_status_t;
 
