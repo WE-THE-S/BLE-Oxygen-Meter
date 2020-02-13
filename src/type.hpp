@@ -21,24 +21,13 @@ typedef enum {
 	FINISH
 } task_status_t;
 
-typedef enum {
-	O2,
-	TEMP,
-	PPO2,
-	BAR,
-	BATTERY,
-
-	FIRST = O2,
-	LAST = BATTERY
-} oled_menu_t;
-
  typedef struct {
 	task_status_t sensorTaskStatus;
 	task_status_t buttonTaskStatus;
 	//얼마나 깨어났는지
 	bool alarmEnable;
+	bool powerOn;
 	sensor_t sensor;
-	oled_menu_t menu;
 } device_status_t;
 
 #endif

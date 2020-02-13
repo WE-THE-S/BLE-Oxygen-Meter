@@ -17,30 +17,25 @@ static void __button_task(void *argv) {
 			rtc_gpio_init(POWER_HOLD_PIN);
 			rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
 			rtc_gpio_set_level(POWER_HOLD_PIN, HIGH);
+			lcd->status->powerOn = true;
 			gpio_hold_en(POWER_HOLD_PIN);
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_EXT0: {
-			if(digitalRead(FUNCTION_BUTTON_PIN) != LOW){
-				lcd->status->alarmEnable = !lcd->status->alarmEnable;
-			}
 			rtc_gpio_hold_dis(POWER_HOLD_PIN);
 			rtc_gpio_init(POWER_HOLD_PIN);
 			rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
-			rtc_gpio_set_level(POWER_HOLD_PIN, rtc_gpio_get_level(POWER_HOLD_PIN) != HIGH ? HIGH : LOW);
+			lcd->status->powerOn = !lcd->status->powerOn;
+			if(lcd->status->powerOn){
+				rtc_gpio_set_level(POWER_HOLD_PIN, HIGH);
+			}else{
+				rtc_gpio_set_level(POWER_HOLD_PIN, LOW);
+			}
 			gpio_hold_en(POWER_HOLD_PIN);
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_EXT1: {
-			if(digitalRead(POWER_BUTTON_PIN) != LOW){
-				lcd->status->alarmEnable = !lcd->status->alarmEnable;
-			}
-			if (lcd->status->menu != oled_menu_t::LAST) {
-				lcd->status->menu = static_cast<oled_menu_t>(static_cast<int>(lcd->status->menu) + 1);
-			} else {
-				lcd->status->menu = oled_menu_t::FIRST;
-			}
-		
+			lcd->status->alarmEnable = !lcd->status->alarmEnable;
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_TIMER: {
