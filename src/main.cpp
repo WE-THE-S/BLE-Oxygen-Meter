@@ -35,11 +35,12 @@ void setup() {
 
 	LCD lcd(&u8g2, &status);
 	ESP_LOGI("Button Task", "Execute");
-	xTaskCreatePinnedToCore(__button_task, "button", 8192, &lcd, tskIDLE_PRIORITY, NULL, BUTTON_TASK_CORE_ID);
-	xTaskCreatePinnedToCore(__sensor_task, "sensor", 8192, &lcd, tskIDLE_PRIORITY, NULL, SENSOR_TASK_CORE_ID);
+	//tskIDLE_PRIORITY
+	xTaskCreatePinnedToCore(__sensor_task, "sensor", 4096, &lcd, 1, NULL, SENSOR_TASK_CORE_ID);
+	xTaskCreatePinnedToCore(__button_task, "button", 4096, &lcd, 1, NULL, BUTTON_TASK_CORE_ID);
 	while(status.buttonTaskStatus != FINISH && status.sensorTaskStatus != FINISH){
 		//ESP_LOGI("wait task", "Wait task");
-		delay(10);
+		lcd.print();
 	}
 	if (lcd.status->alarmEnable) {
 		ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(EMERGENCY_SLEEP_TIME * mS_TO_S_FACTOR));

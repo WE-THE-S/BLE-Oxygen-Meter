@@ -54,7 +54,6 @@ static void __button_task(void *argv) {
 		}
 	}
 	ESP_LOGI("Button", "Button Task Done");
-	lcd->print();
 	lcd->status->buttonTaskStatus = FINISH;
 	vTaskDelete(NULL);
 }
