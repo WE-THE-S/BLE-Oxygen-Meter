@@ -18,9 +18,8 @@ private:
 	U8G2_SSD1327_WS_128X128_F_4W_HW_SPI *u8g2;
 
 public:
-    device_status_t* status;
-	LCD(U8G2_SSD1327_WS_128X128_F_4W_HW_SPI *_u8g2, device_status_t* _status) 
-        : u8g2(_u8g2), status(_status) {
+	LCD(U8G2_SSD1327_WS_128X128_F_4W_HW_SPI *_u8g2) 
+        : u8g2(_u8g2) {
 	}
 	void begin() {
 		if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_UNDEFINED) {

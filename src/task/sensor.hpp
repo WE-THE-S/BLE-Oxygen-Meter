@@ -5,6 +5,7 @@
 #include "../config.hpp"
 #include "../lcd.hpp"
 #include "../type.hpp"
+
 static esp_err_t readSensor(sensor_t *sensor) {
     while(!Serial2.available());
 	String recv = Serial2.readStringUntil('\n');
@@ -51,21 +52,18 @@ static esp_err_t readSensor(sensor_t *sensor) {
 
 static void __sensor_task(void *argv) {
 	LCD *lcd = reinterpret_cast<LCD *>(argv);
-	lcd->status->sensorTaskStatus = RUNNING;
-	Serial.begin(115200);
-	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
-	Serial2.setTimeout(uS_TO_S_FACTOR * 2);
+	status.sensorTaskStatus = RUNNING;
 	sensor_t temp;
-	while(lcd->status->buttonTaskStatus != FINISH){
+	while(status.buttonTaskStatus != FINISH){
 		readSensor(&temp);
 	}
 	ESP_LOGI("Sensor", "Sensor Recv");
 	if(temp.isOk){
-		memcpy(&lcd->status->sensor, &temp, sizeof(sensor_t));
+		memcpy(&status.sensor, &temp, sizeof(sensor_t));
 	}else{
-		lcd->status->sensor.isOk = false;
+		status.sensor.isOk = false;
 	}
-	lcd->status->sensorTaskStatus = FINISH;
+	status.sensorTaskStatus = FINISH;
     vTaskDelete(NULL);
 }
 

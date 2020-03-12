@@ -24,10 +24,20 @@ typedef enum {
  typedef struct {
 	task_status_t sensorTaskStatus;
 	task_status_t buttonTaskStatus;
-	//얼마나 깨어났는지
-	bool alarmEnable;
-	bool powerOn;
-	uint8_t wakeupCount;
+	
+	//얼마나 깨어났는지, 최대 63
+	uint16_t wakeupCount : 6;
+
+	//BLE가 뿌려져야 하는 시간인지 확인용
+	uint16_t bleOn : 1; 
+
+	//켜진 상태 체크
+	uint16_t powerOn : 1;
+	//======
+
+	//SOS enable
+	uint16_t sosEnable : 1;
+
 	sensor_t sensor;
 } device_status_t;
 
