@@ -42,7 +42,7 @@ static esp_ble_adv_params_t adv_param = {
 static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 	switch (event) {
 		case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT: {
-			esp_ble_gap_start_advertising(&adv_param);
+			ESP_ERROR_CHECK(esp_ble_gap_start_advertising(&adv_param));
 			break;
 		}
 		default:
@@ -57,12 +57,9 @@ private:
 public:
 	void begin() {
 		adc_power_off();
-		esp_wifi_deinit();
-		esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_N12);
-		esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
-		ESP_LOGD(TAG, "Advertising Init");
 	}
-	esp_err_t broadcast(sensor_t *sensor);
+	esp_err_t broadcast();
+	esp_err_t update(sensor_t *sensor);
 };
 
 #endif

@@ -51,20 +51,29 @@ static esp_err_t readSensor(sensor_t *sensor) {
 }
 
 static void __sensor_task(void *argv) {
-	LCD *lcd = reinterpret_cast<LCD *>(argv);
-	status.sensorTaskStatus = RUNNING;
-	sensor_t temp;
-	while(status.buttonTaskStatus != FINISH){
-		readSensor(&temp);
-	}
+	LCD* lcd = reinterpret_cast<LCD *>(argv);
 	ESP_LOGI("Sensor", "Sensor Recv");
-	if(temp.isOk){
-		memcpy(&status.sensor, &temp, sizeof(sensor_t));
+
+	BLE ble;
+	if(status.wakeupCount == BROADCAST_INTERVAL_TIME){
+		ble.broadcast();
+		ble.update(&(status.sensor));
+		status.wakeupCount = 0;
 	}else{
-		status.sensor.isOk = false;
+		status.wakeupCount++;
 	}
-	status.sensorTaskStatus = FINISH;
-    vTaskDelete(NULL);
+
+	while(true){
+		sensor_t temp;
+		temp.isOk = (readSensor(&temp) == ESP_OK);
+		status.sensor.barometric = temp.barometric;
+		status.sensor.ppO2 = temp.ppO2;
+		status.sensor.o2 = temp.o2;
+		status.sensor.temp = temp.temp;
+		status.sensor.isOk = temp.isOk;
+		//ble.update(&(status.sensor));
+		lcd->print();
+	}
 }
 
 #endif

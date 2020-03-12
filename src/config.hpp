@@ -25,6 +25,7 @@ const uint64_t NORMAL_SLEEP_TIME = 5;
 const uint64_t EMERGENCY_SLEEP_TIME = 1;
 const uint64_t US_TO_S_FACTOR = 1000;
 const uint64_t MS_TO_S_FACTOR = 1000 * 1000;
+const uint64_t BROADCAST_INTERVAL_TIME = 60;
 
 //핀 정보 상수들
 const gpio_num_t SENSOR_RX_PIN = GPIO_NUM_35;
@@ -46,14 +47,15 @@ const gpio_num_t OLED_CS_PIN = GPIO_NUM_14;
 const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;
 const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 
-const BaseType_t BUTTON_TASK_CORE_ID = 0;
-const BaseType_t SENSOR_TASK_CORE_ID = 1;
+const BaseType_t SENSOR_TASK_CORE_ID = 0;
 
 const uint32_t BUZZER_FREQ = 2048;
 const uint32_t BUZZER_CHANNEL = 0;
 const uint32_t BUZZER_RESOLUTION = 8;
 const uint32_t BUZZER_ON = 128;
 const uint32_t BUZZER_OFF = 0;
+
+
 
 
 //계속 유지되야 하는 데이터들
