@@ -9,11 +9,11 @@
 #include <soc/uart_channel.h>
 
 void IRAM_ATTR __function_handler() {
-
+	status.sosEnable = !status.sosEnable;
 } 
 
 void IRAM_ATTR __power_handler() {
-	
+	status.powerOn = !status.powerOn;
 } 
 
 static void __button_task(void *argv) {

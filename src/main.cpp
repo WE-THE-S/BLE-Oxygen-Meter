@@ -24,7 +24,6 @@ void setup() {
 	pinMode(FUNCTION_BUTTON_PIN, INPUT);
 	attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
 	attachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN), __power_handler, RISING);
-
 	whyWakeup();
 	
 	Serial.begin(115200);
@@ -55,11 +54,11 @@ void setup() {
 				BLE ble;
 				ble.begin();
 				ble.broadcast(&(status.sensor));
-				rtc_gpio_hold_dis(MOTOR_PIN);
-				rtc_gpio_init(MOTOR_PIN);
-				rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
-				rtc_gpio_set_level(MOTOR_PIN, status.wakeupCount & 1 ? HIGH : LOW);
-				gpio_hold_en(MOTOR_PIN);
+				ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
+				ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
+				ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
+				ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, status.wakeupCount & 1 ? HIGH : LOW));
+				ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
 
 				ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
 				ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
@@ -71,11 +70,11 @@ void setup() {
 				alreadyRun = true;
 			}
 		}else{
-			rtc_gpio_hold_dis(MOTOR_PIN);
-			rtc_gpio_init(MOTOR_PIN);
-			rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
-			rtc_gpio_set_level(MOTOR_PIN, LOW);
-			gpio_hold_en(MOTOR_PIN);
+			ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
+			ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
+			ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
+			ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, LOW));
+			ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
 		}
 		lcd.print();
 	}
@@ -84,10 +83,12 @@ void setup() {
 	} else {
 		ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(NORMAL_SLEEP_TIME * MS_TO_S_FACTOR));
 	}
-	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, HIGH));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
 
 	ESP_LOGI("Sleep", "Go To sleep...");
+	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
+	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, HIGH));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
 	esp_deep_sleep_start();
 }
 
