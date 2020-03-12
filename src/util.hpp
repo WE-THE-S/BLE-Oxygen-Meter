@@ -3,6 +3,15 @@
 
 #include <inttypes.h>
 #include <Arduino.h>
+#include <esp_task_wdt.h>
+
+#include "./config.hpp"
+
+//LCD 인스턴스
+U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
+
+LCD lcd(&u8g2);
+BLE ble;
 
 static const char* TAG = "Util";
 char *barray2hexstr(uint8_t *data, size_t datalen) {
@@ -20,6 +29,13 @@ char *barray2hexstr(uint8_t *data, size_t datalen) {
 }
 
 void whyWakeup(){
+	if(status.wakeupCount == BROADCAST_INTERVAL_TIME){
+		status.bleOn = 1;
+		status.wakeupCount = 0;
+	}else{
+		status.bleOn = 0;
+		status.wakeupCount++;
+	}
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
@@ -58,9 +74,10 @@ void whyWakeup(){
 
 
 inline void sleep(){
-	ESP_LOGI("Sleep", "Remove sensor task");
-	vTaskDelete(status.sensorTaskHandle);
+	while(status.waitSensorData){
+	}
 	ESP_LOGI("Sleep", "Go To sleep...");
+	
 	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
 	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
 	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, HIGH));

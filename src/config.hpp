@@ -1,7 +1,6 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
 
-#pragma once
 #include "type.hpp"
 #include <U8g2lib.h>
 #include <inttypes.h>
@@ -21,8 +20,9 @@
 
 //타이머 계산용 상수
 const uint64_t SENSOR_TIMEOUT = 2;
-const uint64_t NORMAL_SLEEP_TIME = 5;
+const uint64_t NORMAL_SLEEP_TIME = 3;
 const uint64_t EMERGENCY_SLEEP_TIME = 1;
+const uint64_t TWDT_TIMEOUT_S = 10;
 const uint64_t US_TO_S_FACTOR = 1000;
 const uint64_t MS_TO_S_FACTOR = 1000 * 1000;
 const uint64_t BROADCAST_INTERVAL_TIME = 60;
@@ -54,9 +54,6 @@ const uint32_t BUZZER_CHANNEL = 0;
 const uint32_t BUZZER_RESOLUTION = 8;
 const uint32_t BUZZER_ON = 128;
 const uint32_t BUZZER_OFF = 0;
-
-
-
 
 //계속 유지되야 하는 데이터들
 //디바이스 정보

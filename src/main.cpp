@@ -8,8 +8,7 @@
 #include <Arduino.h>
 #include <HardwareSerial.cpp>
 #include <U8g2lib.h>
-#include "soc/timer_group_struct.h"
-#include "soc/timer_group_reg.h"
+#include <esp_task_wdt.h>
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -18,14 +17,8 @@
 #include <Wire.h>
 #endif
 
-//LCD 인스턴스
-U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
-
-LCD lcd(&u8g2);
-
 void setup() {
-	disableCore0WDT();
-	disableCore1WDT();
+	status.waitSensorData = 1;
 	//켜지면 바로 pin 설정 부터 진행
 	pinMode(BATTERY_ADC_PIN, INPUT);
 	pinMode(BUZZER_PIN, OUTPUT);
@@ -44,10 +37,6 @@ void setup() {
 	lcd.begin();
 	ESP_LOGI("Button Task", "Execute");
 	//tskIDLE_PRIORITY
-	xTaskCreate(__sensor_task, "sensor", 4096, &lcd
-		, tskIDLE_PRIORITY, &(status.sensorTaskHandle));
-
-	configASSERT(status.sensorTaskHandle);
 
 	status.sensor.requestSos = status.sosEnable;
 	if (status.sensor.o2 < 19.5) {

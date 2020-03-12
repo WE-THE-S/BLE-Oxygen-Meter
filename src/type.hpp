@@ -21,8 +21,6 @@ typedef union {
 } sensor_t;
 
  typedef struct {
-	TaskHandle_t sensorTaskHandle;
-	
 	//얼마나 깨어났는지, 최대 63
 	uint16_t wakeupCount : 6;
 
