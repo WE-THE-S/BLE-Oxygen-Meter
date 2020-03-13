@@ -72,13 +72,18 @@ void whyWakeup(){
 		status.bleOn = 0;
 	}
 
-	if(status.bleOn | status.sosEnable | status.sensor.warringO2){
-		ble.broadcast();
-		ble.update(&(status.sensor));
-	}
-	if((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME == 0) | status.sosEnable | status.sensor.warringO2){
+	if(status.sensor.requestSos | status.sensor.warringO2){
+		if(status.bleOn){
+			ble.broadcast();
+			ble.update(&(status.sensor));
+		}
 		lcd.begin();
 		lcd.print();
+	}else{
+		if((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == 2){
+			lcd.begin();
+			lcd.print();
+		}
 	}
 }
 

@@ -11,6 +11,7 @@
 static uint64_t lastHandle;
 void IRAM_ATTR __function_handler() {
 	if((millis() - lastHandle) > 1){
+		lastHandle = millis();
 		status.sosEnable = !status.sosEnable;
 		ESP_LOGI(TAG, "Alarm %s", status.sosEnable ? "ON" : "OFF");
 	}

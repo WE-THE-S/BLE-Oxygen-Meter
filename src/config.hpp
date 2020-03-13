@@ -49,7 +49,7 @@ const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;
 const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 
 //센서 상수
-const float O2_SENSOR_THRESHOLD = 11.0f;
+const float O2_SENSOR_THRESHOLD = 17.0f;
 const BaseType_t SENSOR_TASK_CORE_ID = 0;
 
 const uint32_t BUZZER_FREQ = 2800;

@@ -58,6 +58,7 @@ void loop() {
 	ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
 	ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
 	if (status.sensor.warringO2 | status.sensor.requestSos) {
+		lcd.print();
 		const uint64_t pendingTime = millis() / 1000;
 		ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW));
 		ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);

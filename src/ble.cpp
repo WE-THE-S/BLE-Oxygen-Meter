@@ -2,7 +2,10 @@
 #include "./ble.hpp"
 
 esp_err_t BLE::broadcast() {
-	if (!btStarted() && !btStart()) {
+	if(btStarted()){
+		stop();
+	}
+	if (!btStart()) {
 		ESP_LOGD(TAG, "BT Start Fail");
 		return ESP_FAIL;
 	}
@@ -22,9 +25,17 @@ esp_err_t BLE::broadcast() {
 		}
 	}
 	ESP_LOGD(TAG, "BT Enable");
+	ESP_ERROR_CHECK(esp_ble_gap_set_device_name("Oxygen Meter"));
 	return ESP_OK;
 }
-
+esp_err_t BLE::stop(){
+    if(btStarted()){
+        ESP_ERROR_CHECK(esp_bluedroid_disable());
+        ESP_ERROR_CHECK(esp_bluedroid_deinit());
+        return btStop() ? ESP_OK : ESP_FAIL;
+    }
+    return ESP_OK;
+}
 
 esp_err_t BLE::update(sensor_t *sensor) {
 	ESP_LOGD(TAG, "BT Update");
@@ -33,7 +44,6 @@ esp_err_t BLE::update(sensor_t *sensor) {
 	adv_config.manufacturer_len = 13;
 
 	//BLE 에러 체크 및 설정
-	ESP_ERROR_CHECK(esp_ble_gap_set_device_name("Oxygen Meter"));
 	ESP_ERROR_CHECK(esp_ble_gap_config_adv_data(&adv_config));
 	ESP_ERROR_CHECK(esp_ble_gap_register_callback(gap_handler));
 

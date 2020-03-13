@@ -60,6 +60,7 @@ public:
 	}
 	esp_err_t broadcast();
 	esp_err_t update(sensor_t *sensor);
+	esp_err_t stop();
 };
 
 #endif
