@@ -21,7 +21,9 @@
 
 static pthread_t sensorThread;
 void setup() {
+	status.wakeupCount++;
 	status.waitSensorData = 1;
+	status.waitProcessDone = 1;
 	//켜지면 바로 pin 설정 부터 진행
 	pinMode(BATTERY_ADC_PIN, INPUT);
 	pinMode(BUZZER_PIN, OUTPUT);
@@ -34,14 +36,14 @@ void setup() {
 	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
 	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
 	Serial2.setRxBufferSize(256);
-	whyWakeup();
 	ESP_LOGI("Main", "Wakeup Count %u", status.wakeupCount);
-	lcd.begin();
 	ESP_LOGI("Button Task", "Execute");
 	//tskIDLE_PRIORITY
+	whyWakeup();
 	if(pthread_create(&sensorThread, NULL, sensorTask, (void*)nullptr)){
-		ESP_LOGE("Thread", "create error");
+		ESP_LOGE("Thread", "sensor thread create error");
 	}
+	ESP_LOGI("Process", "Process Done");
 	pthread_detach(sensorThread);
 }
 
@@ -52,13 +54,12 @@ void loop() {
 		}
 		pthread_detach(sensorThread);
 	}
+	ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
+	ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
+	ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
 	if (status.sensor.warringO2 | status.sensor.requestSos) {
-		ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
-		ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
-		ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
-		ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, status.wakeupCount & 1 ? HIGH : LOW));
-		ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
-
+		const uint64_t pendingTime = millis() / 1000;
+		ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW));
 		ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
 		ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
 		for (int i = 0; i < 6; i++) {
@@ -67,11 +68,9 @@ void loop() {
 		}
 		ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
 	} else {
-		ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
-		ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
-		ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
 		ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, LOW));
-		ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
+		sleep(NORMAL_SLEEP_TIME_MS);
 	}
+	ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
 	lcd.print();
 }

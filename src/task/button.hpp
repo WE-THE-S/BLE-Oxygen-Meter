@@ -8,9 +8,13 @@
 #include <esp_sleep.h>
 #include <soc/uart_channel.h>
 
+static uint64_t lastHandle;
 void IRAM_ATTR __function_handler() {
-	status.sosEnable = !status.sosEnable;
-	ESP_LOGI(TAG, "Alarm %s", status.sosEnable ? "ON" : "OFF");
+	if((millis() - lastHandle) > 1){
+		status.sosEnable = !status.sosEnable;
+		ESP_LOGI(TAG, "Alarm %s", status.sosEnable ? "ON" : "OFF");
+	}
+	lastHandle = millis();
 }
 
 void IRAM_ATTR __power_handler() {

@@ -33,10 +33,12 @@ typedef union {
 	//SOS enable
 	uint16_t sosEnable : 1;
 
-	//SOS enable
+	//센서 데이터 대기중
 	uint16_t waitSensorData : 1;
 	
-	uint16_t dummy: 6;
+	//통신 모듈 데이터 대기중
+	uint16_t waitProcessDone : 1;
+	uint16_t dummy: 5;
 
 	sensor_t sensor;
 } device_status_t;
