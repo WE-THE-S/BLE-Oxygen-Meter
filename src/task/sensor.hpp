@@ -52,7 +52,8 @@ static esp_err_t readSensor(sensor_t *sensor) {
 	return ESP_OK;
 }
 
-void serialEvent2(){
+void* sensorTask(void* test){
+	status.waitSensorData = 1;
 	ESP_LOGD("Serial2 Event", "Serial2 Event Execute");
 	if(status.bleOn | status.sosEnable){
 		ble.broadcast();
@@ -70,12 +71,22 @@ void serialEvent2(){
 	status.sensor.o2 = temp.o2;
 	status.sensor.temp = temp.temp;
 	status.sensor.isOk = temp.isOk;	
-	if(status.bleOn | status.sosEnable){
-		ble.update(&(status.sensor));
-	}
 	lcd.print();
 	ESP_LOGI("Sensor", "Request Done");
+
+	status.sensor.requestSos = status.sosEnable;
+	if (status.sensor.o2 < 19.5) {
+		status.sensor.warringO2 = 1;
+	} else {
+		status.sensor.warringO2 = 0;
+	}
+
+	ESP_LOGI("Sensor", "Read Data %lums", millis());
+	ESP_LOGI("Status", "requestSos : %d", status.sensor.requestSos);
+	ESP_LOGI("Status", "warringO2 : %d", status.sensor.warringO2);
+	if (!(status.sensor.warringO2 || status.sensor.requestSos)) {
+		sleep();
+	}
 	status.waitSensorData = 0;
 }
-
 #endif

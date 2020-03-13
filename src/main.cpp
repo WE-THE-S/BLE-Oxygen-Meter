@@ -9,6 +9,7 @@
 #include <HardwareSerial.cpp>
 #include <U8g2lib.h>
 #include <esp_task_wdt.h>
+#include <pthread.h>
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -17,7 +18,13 @@
 #include <Wire.h>
 #endif
 
+
+static pthread_t sensorThread;
 void setup() {
+	Serial.begin(115200);
+	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
+	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
+	Serial2.setRxBufferSize(256);
 	status.waitSensorData = 1;
 	//켜지면 바로 pin 설정 부터 진행
 	pinMode(BATTERY_ADC_PIN, INPUT);
@@ -28,47 +35,37 @@ void setup() {
 	attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
 	attachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN), __power_handler, RISING);
 	whyWakeup();
-
-	Serial.begin(115200);
-	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
-	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
 	ESP_LOGI("Main", "Wakeup Count %u", status.wakeupCount);
-
 	lcd.begin();
 	ESP_LOGI("Button Task", "Execute");
 	//tskIDLE_PRIORITY
-
-	status.sensor.requestSos = status.sosEnable;
-	if (status.sensor.o2 < 19.5) {
-		status.sensor.warringO2 = 1;
-	} else {
-		status.sensor.warringO2 = 0;
+	if(pthread_create(&sensorThread, NULL, sensorTask, (void*)nullptr)){
+		ESP_LOGE("Thread", "create error");
 	}
-
-	if (!(status.sensor.warringO2 || status.sensor.requestSos)) {
-		sleep();
-	}
+	pthread_detach(sensorThread);
 }
 
 void loop() {
-	bool alreadyRun = false;
-	if (status.sosEnable) {
-		if (!alreadyRun) {
-			ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
-			ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
-			ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
-			ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, status.wakeupCount & 1 ? HIGH : LOW));
-			ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
-
-			ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
-			ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
-			for (int i = 0; i < 6; i++) {
-				ledcWrite(BUZZER_CHANNEL, (i & 1) ? BUZZER_ON : BUZZER_OFF);
-				delay(100);
-			}
-			ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
-			alreadyRun = true;
+	if(!status.waitSensorData){
+		if(pthread_create(&sensorThread, NULL, sensorTask, (void*)nullptr)){
+			ESP_LOGE("Thread", "create error");
 		}
+		pthread_detach(sensorThread);
+	}
+	if (status.sensor.warringO2 | status.sensor.requestSos) {
+		ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
+		ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
+		ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
+		ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, status.wakeupCount & 1 ? HIGH : LOW));
+		ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
+
+		ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
+		ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+		for (int i = 0; i < 6; i++) {
+			ledcWrite(BUZZER_CHANNEL, (i & 1) ? BUZZER_ON : BUZZER_OFF);
+			delay(100);
+		}
+		ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
 	} else {
 		ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
 		ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));

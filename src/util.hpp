@@ -74,7 +74,7 @@ void whyWakeup(){
 
 
 inline void sleep(){
-	while(status.waitSensorData){
+	while(status.waitSensorData != 0){
 	}
 	ESP_LOGI("Sleep", "Go To sleep...");
 	
