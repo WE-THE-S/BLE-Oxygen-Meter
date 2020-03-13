@@ -20,8 +20,7 @@
 
 //타이머 계산용 상수
 const uint64_t SENSOR_TIMEOUT = 2;
-const uint64_t NORMAL_SLEEP_TIME = 3;
-const uint64_t EMERGENCY_SLEEP_TIME = 1;
+const uint64_t NORMAL_SLEEP_TIME = 1;
 const uint64_t TWDT_TIMEOUT_S = 10;
 const uint64_t US_TO_S_FACTOR = 1000;
 const uint64_t MS_TO_S_FACTOR = 1000 * 1000;
@@ -47,9 +46,11 @@ const gpio_num_t OLED_CS_PIN = GPIO_NUM_14;
 const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;
 const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 
+//센서 상수
+const float O2_SENSOR_THRESHOLD = 11.0f;
 const BaseType_t SENSOR_TASK_CORE_ID = 0;
 
-const uint32_t BUZZER_FREQ = 2048;
+const uint32_t BUZZER_FREQ = 2800;
 const uint32_t BUZZER_CHANNEL = 0;
 const uint32_t BUZZER_RESOLUTION = 8;
 const uint32_t BUZZER_ON = 128;

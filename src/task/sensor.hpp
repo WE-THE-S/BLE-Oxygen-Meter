@@ -55,10 +55,6 @@ static esp_err_t readSensor(sensor_t *sensor) {
 void* sensorTask(void* test){
 	status.waitSensorData = 1;
 	ESP_LOGD("Serial2 Event", "Serial2 Event Execute");
-	if(status.bleOn | status.sosEnable){
-		ble.broadcast();
-		ble.update(&(status.sensor));
-	}
 	sensor_t temp;
 	temp.temp = 0.0f;
 	temp.o2 = 0.0f;
@@ -75,7 +71,7 @@ void* sensorTask(void* test){
 	ESP_LOGI("Sensor", "Request Done");
 
 	status.sensor.requestSos = status.sosEnable;
-	if (status.sensor.o2 < 19.5) {
+	if (status.sensor.o2 < O2_SENSOR_THRESHOLD) {
 		status.sensor.warringO2 = 1;
 	} else {
 		status.sensor.warringO2 = 0;

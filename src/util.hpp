@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <esp_task_wdt.h>
 
+#include "./task/button.hpp"
 #include "./config.hpp"
 
 //LCD 인스턴스
@@ -36,25 +37,30 @@ void whyWakeup(){
 		status.bleOn = 0;
 		status.wakeupCount++;
 	}
+
+	if(status.bleOn | status.sosEnable | status.sensor.warringO2){
+		ble.broadcast();
+		ble.update(&(status.sensor));
+	}
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
 			//활성화 안돼있던거면 킨 직후임
-			if(!status.powerOn){
-				rtc_gpio_init(POWER_HOLD_PIN);
-				rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
-				rtc_gpio_set_level(POWER_HOLD_PIN, HIGH);
-				status.powerOn = true;
-				gpio_hold_en(POWER_HOLD_PIN);
-			}
+			rtc_gpio_init(POWER_HOLD_PIN);
+			rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
+			rtc_gpio_set_level(POWER_HOLD_PIN, HIGH);
+			status.powerOn = true;
+			gpio_hold_en(POWER_HOLD_PIN);
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_EXT0: {
 			ESP_LOGI(TAG, "Wakeup by ext0 (Power Button)");
+			__power_handler();
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_EXT1: {
 			ESP_LOGI(TAG, "Wakeup by ext1 (Function Button)");
+			__function_handler();
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_TIMER: {
@@ -74,8 +80,6 @@ void whyWakeup(){
 
 
 inline void sleep(){
-	while(status.waitSensorData != 0){
-	}
 	ESP_LOGI("Sleep", "Go To sleep...");
 	
 	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));

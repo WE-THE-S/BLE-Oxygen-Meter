@@ -21,10 +21,6 @@
 
 static pthread_t sensorThread;
 void setup() {
-	Serial.begin(115200);
-	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
-	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
-	Serial2.setRxBufferSize(256);
 	status.waitSensorData = 1;
 	//켜지면 바로 pin 설정 부터 진행
 	pinMode(BATTERY_ADC_PIN, INPUT);
@@ -34,6 +30,10 @@ void setup() {
 	pinMode(FUNCTION_BUTTON_PIN, INPUT);
 	attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
 	attachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN), __power_handler, RISING);
+	Serial.begin(115200);
+	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
+	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
+	Serial2.setRxBufferSize(256);
 	whyWakeup();
 	ESP_LOGI("Main", "Wakeup Count %u", status.wakeupCount);
 	lcd.begin();
