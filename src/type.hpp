@@ -38,7 +38,10 @@ typedef union {
 	
 	//통신 모듈 데이터 대기중
 	uint16_t waitProcessDone : 1;
-	uint16_t dummy: 5;
+
+	//통신 모듈 데이터 대기중
+	uint16_t waitFirstSensorData : 1;
+	uint16_t dummy: 4;
 
 	sensor_t sensor;
 } device_status_t;

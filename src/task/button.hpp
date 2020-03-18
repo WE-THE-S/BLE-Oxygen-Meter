@@ -14,6 +14,7 @@ void IRAM_ATTR __function_handler() {
 		lastHandle = millis();
 		status.sosEnable = !status.sosEnable;
 		ESP_LOGI(TAG, "Alarm %s", status.sosEnable ? "ON" : "OFF");
+		while(digitalRead(FUNCTION_BUTTON_PIN) != LOW);
 	}
 	lastHandle = millis();
 }
@@ -26,6 +27,7 @@ void IRAM_ATTR __power_handler() {
 	ESP_ERROR_CHECK(rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
 	ESP_ERROR_CHECK(rtc_gpio_set_level(POWER_HOLD_PIN, status.powerOn ? HIGH : LOW));
 	ESP_ERROR_CHECK(gpio_hold_en(POWER_HOLD_PIN));
+	while(digitalRead(POWER_BUTTON_PIN) != HIGH);
 }
 
 #endif

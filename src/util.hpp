@@ -29,6 +29,25 @@ char *barray2hexstr(uint8_t *data, size_t datalen) {
 	return chrs;
 }
 
+void waitPowerOn(){
+	switch (esp_sleep_get_wakeup_cause()) {
+		case ESP_SLEEP_WAKEUP_UNDEFINED: {
+			ESP_LOGI(TAG, "Wakeup by undefined source");
+			status.powerOn = true;
+			//활성화 안돼있던거면 킨 직후임
+			rtc_gpio_init(POWER_HOLD_PIN);
+			rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
+			rtc_gpio_set_level(POWER_HOLD_PIN, HIGH);
+			gpio_hold_en(POWER_HOLD_PIN);
+			break;
+		}
+		case ESP_SLEEP_WAKEUP_EXT0: {
+			ESP_LOGI(TAG, "Wakeup by ext0 (Power Button)");
+			__power_handler();
+			break;
+		}
+	}
+}
 void whyWakeup(){
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
@@ -73,15 +92,9 @@ void whyWakeup(){
 	}
 
 	if(status.sensor.requestSos | status.sensor.warringO2){
-		if(status.bleOn){
-			ble.broadcast();
-			ble.update(&(status.sensor));
-		}
-		lcd.begin();
 		lcd.print();
 	}else{
 		if((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == 2){
-			lcd.begin();
 			lcd.print();
 		}
 	}
@@ -93,7 +106,7 @@ inline void sleep(uint64_t ms){
 	
 	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
 	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, HIGH));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, LOW));
 	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
 	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(ms * US_TO_MS_FACTOR));
 	esp_deep_sleep_start();

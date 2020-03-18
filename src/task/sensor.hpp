@@ -12,6 +12,7 @@ static esp_err_t readSensor(sensor_t *sensor) {
 	while (!Serial2.available())
 		;
 	String recv = Serial2.readStringUntil('\n');
+	
 	recv.toLowerCase();
 	recv = recv.substring(recv.indexOf('o'));
 	if (recv.length() > 5) {
@@ -84,9 +85,12 @@ void *sensorTask(void *test) {
 	ESP_LOGI("Sensor", "offset setup %lums", millis());
 	ESP_LOGI("Status", "requestSos : %d", status.sensor.requestSos);
 	ESP_LOGI("Status", "warringO2 : %d", status.sensor.warringO2);
-	if (!(status.sensor.warringO2 || status.sensor.requestSos)) {
+	if (!(status.sensor.warringO2 | status.sensor.requestSos)) {
 		uint64_t sleepTime = NORMAL_SLEEP_TIME_MS;
 		sleep(sleepTime);
+	}
+	if(status.waitFirstSensorData == 1){
+		status.waitFirstSensorData = 0;
 	}
 	status.waitSensorData = 0;
 }
