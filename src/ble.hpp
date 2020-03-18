@@ -58,13 +58,6 @@ private:
 
 public:
 	BLE() : alreadyInit(false) {
-		const uint8_t *point = esp_bt_dev_get_address();
-
-		char str[32];
-		sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
-					(int)point[0], (int)point[1], (int)point[2], 
-					(int)point[3], (int)point[4], (int)point[5]);
-		ESP_LOGI("BT Address", str);
 	}
 	void begin() {
 		adc_power_off();
@@ -95,6 +88,13 @@ public:
 			}
 			ESP_LOGD(TAG, "BT Enable");
 			ESP_ERROR_CHECK(esp_ble_gap_set_device_name("Oxygen Meter"));
+			const uint8_t *point = esp_bt_dev_get_address();
+
+			char str[32];
+			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
+						(int)point[0], (int)point[1], (int)point[2], 
+						(int)point[3], (int)point[4], (int)point[5]);
+			ESP_LOGI("BT Address", "%s", str);
 			ESP_ERROR_CHECK(esp_ble_gap_register_callback(gap_handler));
 			alreadyInit = true;
 		}
