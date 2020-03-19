@@ -42,9 +42,8 @@ typedef union {
 	//통신 모듈 초기 데이터 대기중
 	uint16_t waitFirstSensorData : 1;
 
-	//배터리 유무
-	uint16_t hasBattery : 1;
-	uint16_t dummy: 3;
+	//warring count
+	uint16_t warringCount : 4;
 	
 	//배터리 레벨
 	double batteryLevel;

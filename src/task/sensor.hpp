@@ -75,8 +75,17 @@ void *sensorTask(void *test) {
 
 	status.sensor.requestSos = status.sosEnable;
 	if (status.sensor.o2 < O2_SENSOR_THRESHOLD) {
-		status.sensor.warringO2 = 1;
+		if(status.warringCount == WARRING_FLAG_RESET_THRESHOLD){
+			status.warringCount = WARRING_FLAG_THRESHOLD;
+		}
+		status.warringCount++;
+		if(status.warringCount >= WARRING_FLAG_THRESHOLD){
+			status.sensor.warringO2 = 1;
+		}else{
+			status.sensor.warringO2 = 0;
+		}
 	} else {
+		status.warringCount = 0;
 		status.sensor.warringO2 = 0;
 	}
 	ESP_LOGI("Sensor", "Prepare Read %lums", prepareTime);

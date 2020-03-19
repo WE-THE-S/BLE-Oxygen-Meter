@@ -60,12 +60,11 @@ void whyWakeup(){
 			ESP_LOGI(TAG, "Wakeup by undefined source");
 			//활성화 안돼있던거면 킨 직후임
 
-			rtc_gpio_init(POWER_HOLD_PIN);
-			rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
-			rtc_gpio_set_level(POWER_HOLD_PIN, HIGH);
-	
 			status.powerOn = true;
-			gpio_hold_en(POWER_HOLD_PIN);
+			ESP_ERROR_CHECK(rtc_gpio_init(POWER_HOLD_PIN));
+			ESP_ERROR_CHECK(rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
+			ESP_ERROR_CHECK(rtc_gpio_set_level(POWER_HOLD_PIN, HIGH));
+			ESP_ERROR_CHECK(gpio_hold_en(POWER_HOLD_PIN));
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_EXT0: {

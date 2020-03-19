@@ -51,11 +51,17 @@ const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 const float O2_SENSOR_THRESHOLD = 17.0f;
 const BaseType_t SENSOR_TASK_CORE_ID = 0;
 
+//부저 관련 상수
 const uint32_t BUZZER_FREQ = 2800;
 const uint32_t BUZZER_CHANNEL = 0;
 const uint32_t BUZZER_RESOLUTION = 8;
 const uint32_t BUZZER_ON = 128;
 const uint32_t BUZZER_OFF = 0;
+
+//경고 관련 상수
+const uint8_t WARRING_FLAG_THRESHOLD = 4;
+const uint8_t WARRING_FLAG_RESET_THRESHOLD = 15;
+
 
 //계속 유지되야 하는 데이터들
 //디바이스 정보
