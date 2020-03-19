@@ -111,11 +111,18 @@ void whyWakeup(){
 
 inline void sleep(uint64_t ms){
 	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
-
 	digitalWrite(RED_LED_PIN, HIGH);
 	digitalWrite(GREEN_LED_PIN, HIGH);
 	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
 	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
+	ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
+	ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
+	ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, LOW));
+	ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
+	ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+	digitalWrite(RED_LED_PIN, HIGH);
+	digitalWrite(GREEN_LED_PIN, HIGH);
+	ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
 	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, LOW));
 	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
 	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(ms * US_TO_MS_FACTOR));

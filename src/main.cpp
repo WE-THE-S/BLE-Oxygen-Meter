@@ -70,7 +70,6 @@ void setup() {
 
 void loop() {
 	if (status.waitFirstSensorData != 1) {
-		ESP_ERROR_CHECK(rtc_gpio_hold_dis(MOTOR_PIN));
 		ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
 		ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
 		if (status.sensor.warringO2 | status.sensor.requestSos) {
