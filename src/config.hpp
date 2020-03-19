@@ -25,8 +25,8 @@ const uint64_t TWDT_TIMEOUT_S = 10;
 const uint64_t MS_TO_S_FACTOR = 1000;
 const uint64_t US_TO_MS_FACTOR = MS_TO_S_FACTOR;
 const uint64_t US_TO_S_FACTOR = 1000 * 1000;
-const uint64_t BROADCAST_INTERVAL_TIME = 120;
-const uint64_t OLED_UPDATE_INTERVAL_TIME = 10;
+const uint64_t BROADCAST_INTERVAL_TIME = 3600;
+const uint64_t OLED_UPDATE_INTERVAL_TIME = 180;
 const uint64_t OLED_UPDATE_TIME = 2;
 
 //핀 정보 상수들

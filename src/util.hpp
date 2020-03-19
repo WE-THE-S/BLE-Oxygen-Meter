@@ -35,11 +35,6 @@ void waitPowerOn(){
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
 			status.powerOn = true;
-			//활성화 안돼있던거면 킨 직후임
-			rtc_gpio_init(POWER_HOLD_PIN);
-			rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY);
-			rtc_gpio_set_level(POWER_HOLD_PIN, HIGH);
-			gpio_hold_en(POWER_HOLD_PIN);
 			break;
 		}
 		case ESP_SLEEP_WAKEUP_EXT0: {
@@ -96,6 +91,14 @@ void whyWakeup(){
 			break;
 		}
 	}
+	double bat = (double)analogRead(BATTERY_ADC_PIN);
+	bat = min((bat / 4096 * 3.3), 4096.0);
+	for(int i = 0;i<10;i++){
+		double temp = (double)analogRead(BATTERY_ADC_PIN);
+		temp = min((temp / 4096 * 3.3), 4096.0);
+		bat = min(bat, temp);
+	}
+	ESP_LOGI("Battery", "%g V", (bat * 2));
 	if(status.sensor.requestSos | status.sensor.warringO2){
 		lcd.print();
 	}else{

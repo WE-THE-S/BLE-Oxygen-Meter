@@ -35,6 +35,9 @@ void setup() {
 		status.wakeupCount++;
 		status.waitSensorData = 1;
 		status.waitProcessDone = 1;
+		//3.860742 MAX CHARGE
+		//3.82 MAX
+		//3.3V 이하면 동작 안함
 		//PULL_DOWN
 		attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
 		//PULL_UP
@@ -93,6 +96,7 @@ void loop() {
 		if (!status.waitSensorData) {
 			if (pthread_create(&sensorThread, NULL, sensorTask, (void *)nullptr)) {
 				ESP_LOGE("Thread", "create error");
+				ESP.restart();
 			}
 			pthread_detach(sensorThread);
 		}
