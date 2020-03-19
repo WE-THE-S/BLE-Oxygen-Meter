@@ -25,8 +25,9 @@ const uint64_t TWDT_TIMEOUT_S = 10;
 const uint64_t MS_TO_S_FACTOR = 1000;
 const uint64_t US_TO_MS_FACTOR = MS_TO_S_FACTOR;
 const uint64_t US_TO_S_FACTOR = 1000 * 1000;
-const uint64_t BROADCAST_INTERVAL_TIME = 60;
+const uint64_t BROADCAST_INTERVAL_TIME = 120;
 const uint64_t OLED_UPDATE_INTERVAL_TIME = 10;
+const uint64_t OLED_UPDATE_TIME = 2;
 
 //핀 정보 상수들
 const gpio_num_t SENSOR_RX_PIN = GPIO_NUM_35;
@@ -37,10 +38,8 @@ const gpio_num_t BUZZER_PIN = GPIO_NUM_13;
 const gpio_num_t MOTOR_PIN = GPIO_NUM_15;
 const gpio_num_t NOT_USED_PIN = GPIO_NUM_39;
 const gpio_num_t BATTERY_ADC_PIN = GPIO_NUM_25;
-const gpio_num_t RED_LED_PIN = GPIO_NUM_21;
-const gpio_num_t GREEN_LED_PIN = GPIO_NUM_27;
-const gpio_num_t BLUE_LED_PIN = GPIO_NUM_22;
-const gpio_num_t LED_ENABLE_PIN = GPIO_NUM_12;
+const gpio_num_t RED_LED_PIN = GPIO_NUM_12;
+const gpio_num_t GREEN_LED_PIN = GPIO_NUM_26;
 
 const gpio_num_t OLED_DIN_PIN = GPIO_NUM_23;
 const gpio_num_t OLED_CLK_PIN = GPIO_NUM_18;

@@ -20,17 +20,21 @@
 
 static pthread_t sensorThread;
 void setup() {
+	//켜지면 바로 pin 설정 부터 진행
+	pinMode(BATTERY_ADC_PIN, INPUT);
+	pinMode(BUZZER_PIN, OUTPUT);
+	pinMode(MOTOR_PIN, OUTPUT);
+	pinMode(POWER_BUTTON_PIN, INPUT);
+	pinMode(FUNCTION_BUTTON_PIN, INPUT);
+	pinMode(GREEN_LED_PIN, OUTPUT);
+	pinMode(RED_LED_PIN, OUTPUT);
+	digitalWrite(RED_LED_PIN, HIGH);
+	digitalWrite(GREEN_LED_PIN, HIGH);
 	if (status.powerOn) {
 		status.waitFirstSensorData = 1;
 		status.wakeupCount++;
 		status.waitSensorData = 1;
 		status.waitProcessDone = 1;
-		//켜지면 바로 pin 설정 부터 진행
-		pinMode(BATTERY_ADC_PIN, INPUT);
-		pinMode(BUZZER_PIN, OUTPUT);
-		pinMode(MOTOR_PIN, OUTPUT);
-		pinMode(POWER_BUTTON_PIN, INPUT);
-		pinMode(FUNCTION_BUTTON_PIN, INPUT);
 		//PULL_DOWN
 		attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
 		//PULL_UP
@@ -75,9 +79,11 @@ void loop() {
 			ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
 			ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
 			for (int i = 0; i < 6; i++) {
+				digitalWrite(RED_LED_PIN, (i & 1 ) ? LOW : HIGH);
 				ledcWrite(BUZZER_CHANNEL, (i & 1) ? BUZZER_ON : BUZZER_OFF);
 				delay(100);
 			}
+			digitalWrite(RED_LED_PIN, HIGH);
 			ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
 		} else {
 			ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, LOW));

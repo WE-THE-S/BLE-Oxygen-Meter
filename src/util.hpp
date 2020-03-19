@@ -50,6 +50,16 @@ void waitPowerOn(){
 	}
 }
 void whyWakeup(){
+	if(status.wakeupCount == BROADCAST_INTERVAL_TIME){
+		status.bleOn = 1;
+		status.wakeupCount = 0;
+	}else{
+		status.bleOn = 0;
+	}
+	if(status.bleOn){
+		ble.broadcast();
+		ble.update(&(status.sensor));
+	}
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
@@ -86,17 +96,10 @@ void whyWakeup(){
 			break;
 		}
 	}
-	if(status.wakeupCount == BROADCAST_INTERVAL_TIME){
-		status.bleOn = 1;
-		status.wakeupCount = 0;
-	}else{
-		status.bleOn = 0;
-	}
-
 	if(status.sensor.requestSos | status.sensor.warringO2){
 		lcd.print();
 	}else{
-		if((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == 2){
+		if((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == OLED_UPDATE_TIME){
 			lcd.print();
 		}
 	}
@@ -105,7 +108,9 @@ void whyWakeup(){
 
 inline void sleep(uint64_t ms){
 	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
-	
+
+	digitalWrite(RED_LED_PIN, HIGH);
+	digitalWrite(GREEN_LED_PIN, HIGH);
 	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
 	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
 	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, LOW));
