@@ -60,7 +60,6 @@ public:
 	BLE() : alreadyInit(false) {
 	}
 	void begin() {
-		adc_power_off();
 	}
 	esp_err_t broadcast() {
 		if (!alreadyInit) {

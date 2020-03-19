@@ -92,6 +92,7 @@ void *sensorTask(void *test) {
 	ESP_LOGI("Sensor", "Sensor Recv Data %lums", sensorRecvTime);
 	ESP_LOGI("Sensor", "Sensor Use Data %lums", sensorUseTime);
 	ESP_LOGI("Sensor", "offset setup %lums", millis());
+	ESP_LOGI("Status", "Warring Count : %u", status.warringCount);
 	ESP_LOGI("Status", "requestSos : %d", status.sensor.requestSos);
 	ESP_LOGI("Status", "warringO2 : %d", status.sensor.warringO2);
 	if (!(status.sensor.warringO2 | status.sensor.requestSos)) {
