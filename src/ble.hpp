@@ -17,8 +17,8 @@ static esp_ble_adv_data_t adv_config = {
 	.set_scan_rsp = false,
 	.include_name = true,
 	.include_txpower = true,
-	.min_interval = 512,
-	.max_interval = 1024,
+	.min_interval = 0x0020,
+	.max_interval = 0x0025,
 	.appearance = 0,
 	.manufacturer_len = 0,
 	.p_manufacturer_data = NULL,
@@ -29,8 +29,8 @@ static esp_ble_adv_data_t adv_config = {
 	.flag = (ESP_BLE_ADV_FLAG_NON_LIMIT_DISC)};
 
 static esp_ble_adv_params_t adv_param = {
-	.adv_int_min = 512,
-	.adv_int_max = 1024,
+	.adv_int_min = 0x0020,
+	.adv_int_max = 0x0025,
 	.adv_type = ADV_TYPE_NONCONN_IND, // Excelent description of this parameter here: https://www.esp32.com/viewtopic.php?t=2267
 	.own_addr_type = BLE_ADDR_TYPE_PUBLIC,
 	.peer_addr = {
