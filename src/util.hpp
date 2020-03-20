@@ -3,11 +3,13 @@
 
 #include <Arduino.h>
 #include <esp_task_wdt.h>
+#include <soc/rtc_cntl_reg.h>
+#include "esp_bt_device.h"
 #include <inttypes.h>
 
 #include "./config.hpp"
 #include "./task/button.hpp"
-#include "esp_bt_device.h"
+
 
 //LCD 인스턴스
 U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
@@ -87,13 +89,9 @@ void whyWakeup() {
 			break;
 		}
 	}
+	analogSetSamples(64);
 	double bat = (double)analogRead(BATTERY_ADC_PIN);
 	bat = min((bat / 4096 * 3.3), 4096.0);
-	for (int i = 0; i < 10; i++) {
-		double temp = (double)analogRead(BATTERY_ADC_PIN);
-		temp = min((temp / 4096 * 3.3), 4096.0);
-		bat = min(bat, temp);
-	}
 	digitalWrite(POWER_HOLD_PIN, LOW);
 	ESP_LOGI("Battery", "%g V", (bat * 2));
 	if (status.sensor.requestSos | status.sensor.warringO2) {
@@ -107,6 +105,7 @@ void whyWakeup() {
 
 inline void sleep(uint64_t ms) {
 	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
+	WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1);
 	digitalWrite(RED_LED_PIN, HIGH);
 	digitalWrite(GREEN_LED_PIN, HIGH);
 	digitalWrite(MOTOR_PIN, LOW);

@@ -45,8 +45,11 @@ typedef union {
 	//warring count
 	uint16_t warringCount : 4;
 	
+	//배터리 전압
+	double rawBatteryVoltage;
+
 	//배터리 레벨
-	double batteryLevel;
+	uint8_t batteryLevel;
 
 	sensor_t sensor;
 } device_status_t;

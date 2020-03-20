@@ -10,6 +10,7 @@
 #include "esp_bt_main.h"
 #include "esp_gap_ble_api.h"
 #include "esp_gatts_api.h"
+#include <soc/rtc_cntl_reg.h>
 #include "esp_wifi.h"
 
 static esp_ble_adv_data_t adv_config = {
@@ -60,6 +61,7 @@ public:
 	BLE() : alreadyInit(false) {
 	}
 	void begin() {
+		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 	}
 	esp_err_t broadcast() {
 		if (!alreadyInit) {
@@ -72,7 +74,7 @@ public:
 			}
 			ESP_LOGD(TAG, "BT Start");
 			ESP_ERROR_CHECK(esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_N12));
-			ESP_ERROR_CHECK(esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9));
+			ESP_ERROR_CHECK(esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_N0));
 			ESP_LOGD(TAG, "Advertising Init");
 			switch (esp_bluedroid_get_status()) {
 				case ESP_BLUEDROID_STATUS_ENABLED: {
