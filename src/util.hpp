@@ -17,6 +17,23 @@ U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/O
 LCD lcd(&u8g2);
 BLE ble;
 
+inline void sleep(uint64_t ms) {
+	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
+	WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1);
+	digitalWrite(RED_LED_PIN, HIGH);
+	digitalWrite(GREEN_LED_PIN, HIGH);
+	digitalWrite(MOTOR_PIN, LOW);
+	digitalWrite(BUZZER_PIN, LOW);
+	digitalWrite(POWER_HOLD_PIN, LOW);
+	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
+	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
+	ESP_ERROR_CHECK(rtc_gpio_set_level(POWER_HOLD_PIN, LOW));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, LOW));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
+	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(ms * US_TO_MS_FACTOR));
+	esp_deep_sleep_start();
+}
+
 static const char *TAG = "Util";
 char *barray2hexstr(uint8_t *data, size_t datalen) {
 	size_t final_len = datalen * 2;
@@ -33,6 +50,13 @@ char *barray2hexstr(uint8_t *data, size_t datalen) {
 }
 
 void waitPowerOn() {
+	switch(esp_reset_reason()){
+		case ESP_RST_BROWNOUT : {
+			status.powerOn = false;
+			sleep(1ull);
+			break;
+		}
+	}
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
@@ -47,6 +71,13 @@ void waitPowerOn() {
 	}
 }
 void whyWakeup() {
+	switch(esp_reset_reason()){
+		case ESP_RST_BROWNOUT : {
+			status.powerOn = false;
+			sleep(1ull);
+			break;
+		}
+	}
 	if (status.wakeupCount == BROADCAST_INTERVAL_TIME) {
 		status.bleOn = 1;
 		status.wakeupCount = 0;
@@ -103,21 +134,5 @@ void whyWakeup() {
 	}
 }
 
-inline void sleep(uint64_t ms) {
-	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
-	WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1);
-	digitalWrite(RED_LED_PIN, HIGH);
-	digitalWrite(GREEN_LED_PIN, HIGH);
-	digitalWrite(MOTOR_PIN, LOW);
-	digitalWrite(BUZZER_PIN, LOW);
-	digitalWrite(POWER_HOLD_PIN, LOW);
-	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
-	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
-	ESP_ERROR_CHECK(rtc_gpio_set_level(POWER_HOLD_PIN, LOW));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, LOW));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
-	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(ms * US_TO_MS_FACTOR));
-	esp_deep_sleep_start();
-}
 
 #endif

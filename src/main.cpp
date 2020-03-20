@@ -70,8 +70,9 @@ void setup() {
 }
 
 void loop() {
-digitalWrite(MOTOR_PIN, LOW);
+	digitalWrite(MOTOR_PIN, LOW);
 	if (status.waitFirstSensorData != 1) {
+		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		if (status.sensor.warringO2 | status.sensor.requestSos) {
 			ble.broadcast();
 			ble.update(&(status.sensor));
