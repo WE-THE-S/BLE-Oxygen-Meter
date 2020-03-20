@@ -30,6 +30,7 @@ void setup() {
 	pinMode(RED_LED_PIN, OUTPUT);
 	digitalWrite(RED_LED_PIN, HIGH);
 	digitalWrite(GREEN_LED_PIN, HIGH);
+	digitalWrite(MOTOR_PIN, LOW);
 	if (status.powerOn) {
 		status.waitFirstSensorData = 1;
 		status.wakeupCount++;
