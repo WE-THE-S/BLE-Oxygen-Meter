@@ -70,7 +70,7 @@ void setup() {
 }
 
 void loop() {
-	digitalWrite(MOTOR_PIN, LOW);
+digitalWrite(MOTOR_PIN, LOW);
 	if (status.waitFirstSensorData != 1) {
 		if (status.sensor.warringO2 | status.sensor.requestSos) {
 			ble.broadcast();
