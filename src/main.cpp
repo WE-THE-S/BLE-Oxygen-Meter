@@ -20,6 +20,7 @@
 
 static pthread_t sensorThread;
 void setup() {
+	whyReset();
 	//켜지면 바로 pin 설정 부터 진행
 	pinMode(BATTERY_ADC_PIN, INPUT);
 	pinMode(BUZZER_PIN, OUTPUT);

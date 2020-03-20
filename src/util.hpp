@@ -49,14 +49,23 @@ char *barray2hexstr(uint8_t *data, size_t datalen) {
 	return chrs;
 }
 
-void waitPowerOn() {
+void whyReset(){
 	switch(esp_reset_reason()){
 		case ESP_RST_BROWNOUT : {
 			status.powerOn = false;
 			sleep(1ull);
 			break;
 		}
+		case ESP_RST_PANIC : {
+			status.powerOn = true;
+			sleep(1ull);
+			break;
+		}
+		default : break;
 	}
+}
+
+void waitPowerOn() {
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
@@ -71,13 +80,6 @@ void waitPowerOn() {
 	}
 }
 void whyWakeup() {
-	switch(esp_reset_reason()){
-		case ESP_RST_BROWNOUT : {
-			status.powerOn = false;
-			sleep(1ull);
-			break;
-		}
-	}
 	if (status.wakeupCount == BROADCAST_INTERVAL_TIME) {
 		status.bleOn = 1;
 		status.wakeupCount = 0;
@@ -120,7 +122,6 @@ void whyWakeup() {
 			break;
 		}
 	}
-	analogSetSamples(64);
 	double bat = (double)analogRead(BATTERY_ADC_PIN);
 	bat = min((bat / 4096 * 3.3), 4096.0);
 	digitalWrite(POWER_HOLD_PIN, LOW);
