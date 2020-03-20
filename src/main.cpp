@@ -70,15 +70,14 @@ void setup() {
 }
 
 void loop() {
+	digitalWrite(MOTOR_PIN, LOW);
 	if (status.waitFirstSensorData != 1) {
-		ESP_ERROR_CHECK(rtc_gpio_init(MOTOR_PIN));
-		ESP_ERROR_CHECK(rtc_gpio_set_direction(MOTOR_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
 		if (status.sensor.warringO2 | status.sensor.requestSos) {
 			ble.broadcast();
 			ble.update(&(status.sensor));
 			lcd.print();
 			const uint64_t pendingTime = millis() / 1000;
-			ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW));
+			digitalWrite(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW);
 			ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
 			ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
 			for (int i = 0; i < 6; i++) {
@@ -89,10 +88,9 @@ void loop() {
 			digitalWrite(RED_LED_PIN, HIGH);
 			ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
 		} else {
-			ESP_ERROR_CHECK(rtc_gpio_set_level(MOTOR_PIN, LOW));
+			digitalWrite(MOTOR_PIN, LOW);
 			sleep(NORMAL_SLEEP_TIME_MS);
 		}
-		ESP_ERROR_CHECK(gpio_hold_en(MOTOR_PIN));
 		if (!status.waitSensorData) {
 			if (pthread_create(&sensorThread, NULL, sensorTask, (void *)nullptr)) {
 				ESP_LOGE("Thread", "create error");
