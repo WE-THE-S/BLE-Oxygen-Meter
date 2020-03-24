@@ -21,7 +21,6 @@
 //타이머 계산용 상수
 const uint64_t SENSOR_TIMEOUT = 1;
 const uint64_t NORMAL_SLEEP_TIME_MS = 1000;
-const uint64_t TWDT_TIMEOUT_S = 10;
 const uint64_t MS_TO_S_FACTOR = 1000;
 const uint64_t US_TO_MS_FACTOR = MS_TO_S_FACTOR;
 const uint64_t US_TO_S_FACTOR = 1000 * 1000;
