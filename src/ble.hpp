@@ -64,6 +64,7 @@ public:
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 	}
 	esp_err_t broadcast() {
+		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		if (!alreadyInit) {
 			if (btStarted()) {
 				stop();
@@ -111,6 +112,7 @@ public:
 	}
 
 	esp_err_t update(sensor_t *sensor) {
+		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		ESP_LOGD(TAG, "BT Update");
 		//데이터 설정
 		adv_config.p_manufacturer_data = sensor->bytes;

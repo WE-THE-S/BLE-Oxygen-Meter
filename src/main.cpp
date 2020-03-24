@@ -32,6 +32,13 @@ void setup() {
 	digitalWrite(RED_LED_PIN, HIGH);
 	digitalWrite(GREEN_LED_PIN, HIGH);
 	digitalWrite(MOTOR_PIN, LOW);
+	//PULL_DOWN
+	attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
+	//PULL_UP
+	attachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN), __power_handler, FALLING);
+	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
+	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
+	Serial2.setRxBufferSize(256);
 	if (status.powerOn) {
 		status.waitFirstSensorData = 1;
 		status.wakeupCount++;
@@ -40,13 +47,6 @@ void setup() {
 		//3.860742 MAX CHARGE
 		//3.82 MAX
 		//3.3V 이하면 동작 안함
-		//PULL_DOWN
-		attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
-		//PULL_UP
-		attachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN), __power_handler, FALLING);
-		Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
-		Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
-		Serial2.setRxBufferSize(256);
 		ESP_LOGI("Main", "Wakeup Count %u", status.wakeupCount);
 		ESP_LOGI("Button Task", "Execute");
 		//tskIDLE_PRIORITY
