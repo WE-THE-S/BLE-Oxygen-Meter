@@ -54,8 +54,9 @@ void setup() {
 		if (pthread_create(&sensorThread, NULL, sensorTask, (void *)nullptr)) {
 			ESP_LOGE("Thread", "sensor thread create error");
 			ESP.restart();
+		}else{
+			pthread_detach(sensorThread);
 		}
-		pthread_detach(sensorThread);
 		ESP_LOGI("Process", "Process Done");
 	} else {
 		waitPowerOn();
@@ -97,8 +98,9 @@ void loop() {
 			if (pthread_create(&sensorThread, NULL, sensorTask, (void *)nullptr)) {
 				ESP_LOGE("Thread", "create error");
 				ESP.restart();
+			}else{
+				pthread_detach(sensorThread);
 			}
-			pthread_detach(sensorThread);
 		}
 	} else {
 		delay(500);
