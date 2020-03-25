@@ -2,6 +2,7 @@
 #define __SENSOR_TASK_HPP__
 #include <Arduino.h>
 #include <esp_err.h>
+#include <inttypes.h>
 #include <esp_task_wdt.h>
 #include "../config.hpp"
 #include "../lcd.hpp"

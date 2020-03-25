@@ -34,7 +34,6 @@ inline void sleep(uint64_t ms) {
 	esp_deep_sleep_start();
 }
 
-static const char *TAG = "Util";
 char *barray2hexstr(uint8_t *data, size_t datalen) {
 	size_t final_len = datalen * 2;
 	char *chrs = (char *)malloc((final_len + 1) * sizeof(*chrs));
@@ -77,6 +76,7 @@ void waitPowerOn() {
 			__power_handler();
 			break;
 		}
+		default : break;
 	}
 }
 void whyWakeup() {
