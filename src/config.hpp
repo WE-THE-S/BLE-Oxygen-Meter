@@ -25,7 +25,7 @@ const uint64_t MS_TO_S_FACTOR = 1000;
 const uint64_t US_TO_MS_FACTOR = MS_TO_S_FACTOR;
 const uint64_t US_TO_S_FACTOR = 1000 * 1000;
 const uint64_t BROADCAST_INTERVAL_TIME = 3600;
-const uint64_t OLED_UPDATE_INTERVAL_TIME = 180;
+const uint64_t OLED_UPDATE_INTERVAL_TIME = 10;
 const uint64_t OLED_UPDATE_TIME = 2;
 
 //핀 정보 상수들
@@ -47,7 +47,7 @@ const gpio_num_t OLED_DC_PIN = GPIO_NUM_5;
 const gpio_num_t OLED_RESET_PIN = GPIO_NUM_19;
 
 //센서 상수
-const float O2_SENSOR_THRESHOLD = 10.0f;
+const float O2_SENSOR_THRESHOLD = 18.5f;
 const BaseType_t SENSOR_TASK_CORE_ID = 0;
 
 //부저 관련 상수

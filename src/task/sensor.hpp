@@ -54,6 +54,11 @@ static esp_err_t readSensor(sensor_t *sensor) {
 	return ESP_OK;
 }
 
+/**
+ * @author Kim Gyeongsik 
+ * @brief 센서 데이터 파싱을 위한 함수
+ * @param void* $test 아무값도 아님
+**/
 void *sensorTask(void *test) {
 	status.waitSensorData = 1;
 	ESP_LOGD("Serial2 Event", "Serial2 Event Execute");

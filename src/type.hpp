@@ -4,8 +4,17 @@
 #include <U8g2lib.h>
 #include <inttypes.h>
 
+
+/**
+ * @struct sensor_t
+ * @brief 센서 데이터 구조체
+ */
 typedef union {
 	struct {
+		/**
+		 * @var float temp
+		 * 온도 변수
+		*/
 		float temp;
 		float o2;
 		
@@ -20,6 +29,11 @@ typedef union {
 	uint8_t bytes[];
 } sensor_t;
 
+
+/**
+ * @struct device_status_t
+ * @brief 기기의 현 상태를 저장하는 구조체
+ */
  typedef struct {
 	//얼마나 깨어났는지, 최대 63
 	uint16_t wakeupCount : 6;
