@@ -35,10 +35,14 @@ const gpio_num_t FUNCTION_BUTTON_PIN = GPIO_NUM_34;
 const gpio_num_t POWER_BUTTON_PIN = GPIO_NUM_33;
 const gpio_num_t BUZZER_PIN = GPIO_NUM_13;
 const gpio_num_t MOTOR_PIN = GPIO_NUM_15;
+//15번 모터 핀도 위험하긴 함
+//https://github.com/espressif/esptool/wiki/ESP32-Boot-Mode-Selection#other-pins
 const gpio_num_t NOT_USED_PIN = GPIO_NUM_39;
 const gpio_num_t BATTERY_ADC_PIN = GPIO_NUM_25;
-const gpio_num_t RED_LED_PIN = GPIO_NUM_12;
+//const gpio_num_t RED_LED_PIN = GPIO_NUM_12;
 const gpio_num_t GREEN_LED_PIN = GPIO_NUM_26;
+const gpio_num_t RED_LED_PIN = GREEN_LED_PIN;
+//기존 RED LED 핀이 MTDI와 겹치면서 부팅 불가 상황에 들어가서 핀 변경
 
 const gpio_num_t OLED_DIN_PIN = GPIO_NUM_23;
 const gpio_num_t OLED_CLK_PIN = GPIO_NUM_18;

@@ -43,6 +43,13 @@ static esp_ble_adv_params_t adv_param = {
 static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 	switch (event) {
 		case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT: {
+			const uint8_t *point = esp_bt_dev_get_address();
+
+			char str[32];
+			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
+						(int)point[0], (int)point[1], (int)point[2], 
+						(int)point[3], (int)point[4], (int)point[5]);
+			ESP_LOGI("BT Address", "%s", str);
 			ESP_LOGD(TAG, "ADV Update");
 			ESP_ERROR_CHECK(esp_ble_gap_start_advertising(&adv_param));
 			break;
@@ -50,7 +57,7 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 		default:
 			break;
 	}
-}
+}//30:AE:A4:C6:F4:6A
 class BLE {
 private:
 	//9A99D541 B81E9341 01 00B2 00F7
@@ -90,13 +97,6 @@ public:
 			}
 			ESP_LOGD(TAG, "BT Enable");
 			ESP_ERROR_CHECK(esp_ble_gap_set_device_name("Oxygen Meter"));
-			const uint8_t *point = esp_bt_dev_get_address();
-
-			char str[32];
-			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
-						(int)point[0], (int)point[1], (int)point[2], 
-						(int)point[3], (int)point[4], (int)point[5]);
-			ESP_LOGI("BT Address", "%s", str);
 			ESP_ERROR_CHECK(esp_ble_gap_register_callback(gap_handler));
 			alreadyInit = true;
 		}
