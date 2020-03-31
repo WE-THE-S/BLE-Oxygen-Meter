@@ -21,6 +21,7 @@ typedef union {
 		int16_t ppO2;
 		int16_t barometric;
 		
+		//아래부터 채워짐 
 		uint8_t isOk : 1;
 		uint8_t requestSos : 1;
 		uint8_t warringO2 : 1;
@@ -29,12 +30,20 @@ typedef union {
 	uint8_t bytes[];
 } sensor_t;
 
+typedef enum {
+	SAFE,
+	WARRING_1ST,
+	WARRING_2ND,
+	WARRING_3RD,
+
+	UNSAFE = WARRING_3RD
+} alarm_status_t;
 
 /**
  * @struct device_status_t
  * @brief 기기의 현 상태를 저장하는 구조체
  */
- typedef struct {
+typedef struct {
 	//얼마나 깨어났는지, 최대 63
 	uint16_t wakeupCount : 6;
 
@@ -64,6 +73,9 @@ typedef union {
 
 	//배터리 레벨
 	uint8_t batteryLevel;
+	
+	//Alarm레벨
+	alarm_status_t alarmLevel;
 
 	sensor_t sensor;
 } device_status_t;
