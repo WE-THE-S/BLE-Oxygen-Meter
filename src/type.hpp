@@ -43,14 +43,15 @@ typedef enum {
 uint8_t operator<<(const uint8_t& a, const alarm_status_t& value){
 	switch(value){
 		case WARRING_1ST : 
-			return 1;
+			return 1u;
 		case WARRING_2ND : 
-			return 2;
+			return 2u;
 		case WARRING_3RD :
-			return 3;
+			return 3u;
 		case SAFE :
-			return 0;
+			return 0u;
 	}
+	return 0u;
 }
 
 /**
