@@ -64,7 +64,7 @@ const uint32_t BUZZER_ON = 128;
 const uint32_t BUZZER_OFF = 0;
 
 //경고 관련 상수
-const uint8_t WARRING_FLAG_THRESHOLD = 5;
+const uint8_t WARRING_FLAG_THRESHOLD = 3;
 const uint8_t WARRING_FLAG_RESET_THRESHOLD = 15;
 
 
