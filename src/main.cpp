@@ -3,7 +3,7 @@
 #include "./task/button.hpp"
 #include "./task/sensor.hpp"
 #include "./type.hpp"
-#include "util.hpp"
+#include "./util.hpp"
 
 #include <Arduino.h>
 #include <HardwareSerial.cpp>
@@ -80,7 +80,7 @@ void loop() {
 			if(status.sensor.requestSos){
 				frequency = 3;
 			}else{
-				frequency << status.alarmLevel;
+				frequency = toUint8(status.alarmLevel);
 			}
 			if(frequency != 0){
 				alarm(frequency);

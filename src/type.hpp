@@ -32,27 +32,13 @@ typedef union {
 } sensor_t;
 
 typedef enum {
-	SAFE,
-	WARRING_1ST,
-	WARRING_2ND,
-	WARRING_3RD,
+	SAFE = 0,
+	WARRING_1ST = 1,
+	WARRING_2ND = 2,
+	WARRING_3RD = 2,
 
 	UNSAFE = WARRING_3RD
 } alarm_status_t;
-
-uint8_t operator<<(const uint8_t& a, const alarm_status_t& value){
-	switch(value){
-		case WARRING_1ST : 
-			return 1u;
-		case WARRING_2ND : 
-			return 2u;
-		case WARRING_3RD :
-			return 3u;
-		case SAFE :
-			return 0u;
-	}
-	return 0u;
-}
 
 /**
  * @struct device_status_t

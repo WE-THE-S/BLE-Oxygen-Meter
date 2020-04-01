@@ -80,7 +80,7 @@ void *sensorTask(void *test) {
 	ESP_LOGI("Sensor", "Request Done");
 
 	status.sensor.requestSos = status.sosEnable;
-	alarm_status_t nowAlarmLevel;
+	alarm_status_t nowAlarmLevel = SAFE;
 
 	if(temp.o2 <= O2_SENSOR_WARRING_1ST_THRESHOLD){
 		nowAlarmLevel = WARRING_1ST;

@@ -155,4 +155,10 @@ void alarm(const uint8_t frequency){
 	digitalWrite(RED_LED_PIN, HIGH);
 	ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
 }
+
+template <typename T>
+uint8_t toUint8(T value){
+	return static_cast<uint8_t>(value);
+}
+
 #endif
