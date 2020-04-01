@@ -55,7 +55,10 @@ void setup() {
 			ESP_LOGE("Thread", "sensor thread create error");
 			ESP.restart();
 		}else{
-			pthread_detach(sensorThread);
+			if(pthread_detach(sensorThread) != 0){
+				ESP_LOGE("Thread", "detach error");
+				ESP.restart();
+			}
 		}
 		ESP_LOGI("Process", "Process Done");
 	} else {
@@ -76,14 +79,12 @@ void loop() {
 	if (status.waitFirstSensorData != 1) {
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		if (status.sensor.warringO2 | status.sensor.requestSos) {
-			uint8_t frequency = 0;
 			if(status.sensor.requestSos){
-				frequency = 3;
-			}else{
-				frequency = toUint8(status.alarmLevel);
+				status.alarmLevel = UNSAFE;
 			}
-			if(frequency != 0){
-				alarm(frequency);
+
+			if(status.alarmLevel != SAFE){
+				alarm(static_cast<uint8_t>(status.alarmLevel));
 			}
 		} else {
 			digitalWrite(MOTOR_PIN, LOW);
@@ -94,7 +95,10 @@ void loop() {
 				ESP_LOGE("Thread", "create error");
 				ESP.restart();
 			}else{
-				pthread_detach(sensorThread);
+				if(pthread_detach(sensorThread) != 0){
+					ESP_LOGE("Thread", "detach error");
+					ESP.restart();
+				}
 			}
 		}
 	} else {
