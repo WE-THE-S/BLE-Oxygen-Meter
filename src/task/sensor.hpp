@@ -80,20 +80,28 @@ void *sensorTask(void *test) {
 	ESP_LOGI("Sensor", "Request Done");
 
 	status.sensor.requestSos = status.sosEnable;
-	if (status.sensor.o2 < O2_SENSOR_THRESHOLD) {
-		if(status.warringCount == WARRING_FLAG_RESET_THRESHOLD){
-			status.warringCount = WARRING_FLAG_THRESHOLD;
-		}
-		status.warringCount++;
-		if(status.warringCount >= WARRING_FLAG_THRESHOLD){
-			status.sensor.warringO2 = 1;
-		}else{
+	alarm_status_t nowAlarmLevel;
+	nowAlarmLevel = nowAlarmLevel + temp.o2;
+	switch(nowAlarmLevel){
+		case SAFE : {
+			status.warringCount = 0;
 			status.sensor.warringO2 = 0;
+			break;
 		}
-	} else {
-		status.warringCount = 0;
-		status.sensor.warringO2 = 0;
+		default : {
+			if(status.warringCount == WARRING_FLAG_RESET_THRESHOLD){
+				status.warringCount = WARRING_FLAG_THRESHOLD;
+			}
+			status.warringCount++;
+			if(status.warringCount >= WARRING_FLAG_THRESHOLD){
+				status.sensor.warringO2 = 1;
+			}else{
+				status.sensor.warringO2 = 0;
+			}
+			break;
+		}
 	}
+	status.alarmLevel = nowAlarmLevel;
 	ESP_LOGI("Sensor", "Prepare Read %lums", prepareTime);
 	ESP_LOGI("Sensor", "Sensor Recv Data %lums", sensorRecvTime);
 	ESP_LOGI("Sensor", "Sensor Use Data %lums", sensorUseTime);

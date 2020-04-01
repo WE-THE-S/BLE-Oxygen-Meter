@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include <inttypes.h>
+#include "./config.hpp"
 
 
 /**
@@ -38,6 +39,31 @@ typedef enum {
 
 	UNSAFE = WARRING_3RD
 } alarm_status_t;
+
+alarm_status_t operator+(const alarm_status_t& a, const float& value){
+	if(value <= O2_SENSOR_WARRING_1ST_THRESHOLD){
+		return WARRING_1ST;
+	}else if(value <= O2_SENSOR_WARRING_2ND_THRESHOLD){
+		return WARRING_2ND;
+	}else if(value <= O2_SENSOR_WARRING_3RD_THRESHOLD){
+		return WARRING_3RD;
+	}else{
+		return SAFE;
+	}
+}
+
+uint8_t operator<<(const uint8_t& a, const alarm_status_t& value){
+	switch(value){
+		case WARRING_1ST : 
+			return 1;
+		case WARRING_2ND : 
+			return 2;
+		case WARRING_3RD :
+			return 3;
+		case SAFE :
+			return 0;
+	}
+}
 
 /**
  * @struct device_status_t

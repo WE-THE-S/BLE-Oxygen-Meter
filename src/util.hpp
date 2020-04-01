@@ -136,4 +136,23 @@ void whyWakeup() {
 }
 
 
+/**
+ * @param uint8_t frequency 초에 몇번하는건지
+ */
+void alarm(const uint8_t frequency){
+	ble.broadcast();
+	ble.update(&(status.sensor));
+	lcd.print();
+	const uint64_t pendingTime = millis() / 1000;
+	digitalWrite(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW);
+	ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
+	ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+	for (int i = 0; i < (frequency * 2); i++) {
+		digitalWrite(RED_LED_PIN, (i & 1 ) ? LOW : HIGH);
+		ledcWrite(BUZZER_CHANNEL, (i & 1) ? BUZZER_ON : BUZZER_OFF);
+		delay(300 / frequency);
+	}
+	digitalWrite(RED_LED_PIN, HIGH);
+	ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
+}
 #endif

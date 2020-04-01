@@ -76,20 +76,15 @@ void loop() {
 	if (status.waitFirstSensorData != 1) {
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		if (status.sensor.warringO2 | status.sensor.requestSos) {
-			ble.broadcast();
-			ble.update(&(status.sensor));
-			lcd.print();
-			const uint64_t pendingTime = millis() / 1000;
-			digitalWrite(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW);
-			ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
-			ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
-			for (int i = 0; i < 6; i++) {
-				digitalWrite(RED_LED_PIN, (i & 1 ) ? LOW : HIGH);
-				ledcWrite(BUZZER_CHANNEL, (i & 1) ? BUZZER_ON : BUZZER_OFF);
-				delay(100);
+			uint8_t frequency = 0;
+			if(status.sensor.requestSos){
+				frequency = 3;
+			}else{
+				frequency << status.alarmLevel;
 			}
-			digitalWrite(RED_LED_PIN, HIGH);
-			ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
+			if(frequency != 0){
+				alarm(frequency);
+			}
 		} else {
 			digitalWrite(MOTOR_PIN, LOW);
 			sleep(NORMAL_SLEEP_TIME_MS);
