@@ -20,6 +20,9 @@
 
 static pthread_t sensorThread;
 void setup() {
+	ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
+	ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+	ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
 	whyReset();
 	//켜지면 바로 pin 설정 부터 진행
 	pinMode(BATTERY_ADC_PIN, INPUT);
@@ -82,10 +85,7 @@ void loop() {
 			if(status.sensor.requestSos){
 				status.alarmLevel = UNSAFE;
 			}
-
-			if(status.alarmLevel != SAFE){
-				alarm(static_cast<uint8_t>(status.alarmLevel));
-			}
+			alarm(status.alarmLevel);
 		} else {
 			digitalWrite(MOTOR_PIN, LOW);
 			sleep(NORMAL_SLEEP_TIME_MS);
