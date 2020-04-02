@@ -10,7 +10,6 @@
 #include "./config.hpp"
 #include "./task/button.hpp"
 
-
 //LCD 인스턴스
 U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/OLED_DC_PIN, /* reset=*/OLED_RESET_PIN);
 
@@ -32,20 +31,6 @@ inline void sleep(uint64_t ms) {
 	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
 	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(ms * US_TO_MS_FACTOR));
 	esp_deep_sleep_start();
-}
-
-char *barray2hexstr(uint8_t *data, size_t datalen) {
-	size_t final_len = datalen * 2;
-	char *chrs = (char *)malloc((final_len + 1) * sizeof(*chrs));
-	unsigned int j = 0;
-	for (j = 0; j < datalen; j++) {
-		chrs[2 * j] = (data[j] >> 4) + 48;
-		chrs[2 * j + 1] = (data[j] & 15) + 48;
-		if (chrs[2 * j] > 57) chrs[2 * j] += 7;
-		if (chrs[2 * j + 1] > 57) chrs[2 * j + 1] += 7;
-	}
-	chrs[2 * j] = '\0';
-	return chrs;
 }
 
 void whyReset(){
@@ -136,13 +121,10 @@ void whyWakeup() {
 }
 
 
-/**
- * @param uint8_t frequency 초에 몇번하는건지
- */
 esp_err_t alarm(const alarm_status_t alarm){
 	if(status.alarmLevel != SAFE){
-		ble.broadcast();
-		ble.update(&(status.sensor));
+		ESP_ERROR_CHECK(ble.broadcast());
+		ESP_ERROR_CHECK(ble.update(&(status.sensor)));
 		lcd.print();
 		const uint64_t pendingTime = millis() / 1000;
 		digitalWrite(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW);
