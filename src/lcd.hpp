@@ -50,7 +50,7 @@ public:
 		this->u8g2->setFontMode(2);
 		this->u8g2->setFontDirection(0);
 		this->u8g2->clearBuffer();
-		this->u8g2->setFont(u8g2_font_fub25_tf);
+		this->u8g2->setFont(u8g2_font_fub25_tr);
 		char str[32] = {
 			0,
 		};
@@ -77,7 +77,7 @@ public:
 		this->u8g2->drawBox(42, 9, lenght, 30);
 		memset(str, 0x00, sizeof(char) * 32);
 		sprintf(str, "%u", status.batteryLevel);
-		this->u8g2->setFont(u8g2_font_profont22_mr);
+		this->u8g2->setFont(u8g2_font_profont22_tr);
 		this->u8g2->drawStr(82 - (this->u8g2->getStrWidth(str) >> 1), 31, str);
 		this->u8g2->sendBuffer();
 	}
