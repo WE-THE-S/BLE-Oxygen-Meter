@@ -60,8 +60,8 @@ public:
 			this->u8g2->getDisplayHeight() - (this->u8g2->getMaxCharHeight() >> 1),
 			str);
 
-		if(status.alarmLevel >= WARRING_1ST){
-		this->u8g2->setFont(u8g2_font_fub11_tf);
+		if(status.sensor.warringO2 | status.sensor.requestSos){
+		this->u8g2->setFont(u8g2_font_profont10_tr);
 			memset(str, 0x00, sizeof(char) * 32);
 			sprintf(str, "%.2f%%", status.sensor.o2);
 			const uint8_t *point = esp_bt_dev_get_address();
@@ -71,9 +71,7 @@ public:
 						(int)point[0], (int)point[1], (int)point[2], 
 						(int)point[3], (int)point[4], (int)point[5]);
 			this->u8g2->drawStr(
-				(this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1,
-				this->u8g2->getDisplayHeight() - (this->u8g2->getMaxCharHeight() >> 1),
-				str);
+				(this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1, 120, str);
 		}
 		this->u8g2->setFont(u8g2_font_open_iconic_all_4x_t);
 		this->u8g2->drawGlyph(5, 40, 0x79 - (status.sensor.isOk));
