@@ -106,13 +106,15 @@ void whyWakeup() {
 		}
 	}
 	double bat = (double)analogRead(BATTERY_ADC_PIN);
-	bat = min((bat / 4096 * 3.3), 4096.0);
+	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
 	digitalWrite(POWER_HOLD_PIN, LOW);
-	ESP_LOGI("Battery", "%g V", (bat * 2));
-	float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) - (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
+	ESP_LOGI("Battery", "%g V", bat);
+	float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) / (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
+	ESP_LOGI("Battery", "raw Level %u %%", level);
 	level = min(level, 100.0f);
 	level = max(level, 0.0f);
 	status.batteryLevel = static_cast<uint8_t>(level);
+	ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
 	if (status.sensor.requestSos | status.sensor.warringO2) {
 		lcd.print();
 	} else {
