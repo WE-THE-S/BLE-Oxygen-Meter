@@ -106,6 +106,7 @@ void whyWakeup() {
 	
 	}
 	digitalWrite(POWER_HOLD_PIN, HIGH);
+	delayMicroseconds(1);
 	double bat = (double)analogRead(BATTERY_ADC_PIN);
 	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
 	digitalWrite(POWER_HOLD_PIN, LOW);
