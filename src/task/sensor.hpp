@@ -82,12 +82,12 @@ void *sensorTask(void *test) {
 	status.sensor.requestSos = status.sosEnable;
 	alarm_status_t nowAlarmLevel = SAFE;
 
-	if(temp.o2 <= O2_SENSOR_WARRING_1ST_THRESHOLD){
-		nowAlarmLevel = WARRING_1ST;
+	if(temp.o2 <= O2_SENSOR_WARRING_3RD_THRESHOLD){
+		nowAlarmLevel = WARRING_3RD;
 	}else if(temp.o2 <= O2_SENSOR_WARRING_2ND_THRESHOLD){
 		nowAlarmLevel = WARRING_2ND;
-	}else if(temp.o2 <= O2_SENSOR_WARRING_3RD_THRESHOLD){
-		nowAlarmLevel = WARRING_3RD;
+	}else if(temp.o2 <= O2_SENSOR_WARRING_1ST_THRESHOLD){
+		nowAlarmLevel = WARRING_1ST;
 	}else{
 		nowAlarmLevel = SAFE;
 	}
