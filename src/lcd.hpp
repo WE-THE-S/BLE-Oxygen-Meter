@@ -5,6 +5,7 @@
 #include "type.hpp"
 #include <Arduino.h>
 #include <U8g2lib.h>
+#include "esp_bt_device.h"
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -58,7 +59,22 @@ public:
 			(this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1,
 			this->u8g2->getDisplayHeight() - (this->u8g2->getMaxCharHeight() >> 1),
 			str);
-		
+
+		if(status.alarmLevel >= WARRING_1ST){
+		this->u8g2->setFont(u8g2_font_fub11_tf);
+			memset(str, 0x00, sizeof(char) * 32);
+			sprintf(str, "%.2f%%", status.sensor.o2);
+			const uint8_t *point = esp_bt_dev_get_address();
+
+			char str[32];
+			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
+						(int)point[0], (int)point[1], (int)point[2], 
+						(int)point[3], (int)point[4], (int)point[5]);
+			this->u8g2->drawStr(
+				(this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1,
+				this->u8g2->getDisplayHeight() - (this->u8g2->getMaxCharHeight() >> 1),
+				str);
+		}
 		this->u8g2->setFont(u8g2_font_open_iconic_all_4x_t);
 		this->u8g2->drawGlyph(5, 40, 0x79 - (status.sensor.isOk));
 		this->u8g2->sendBuffer();
