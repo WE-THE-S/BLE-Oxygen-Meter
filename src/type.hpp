@@ -35,7 +35,7 @@ typedef enum {
 	SAFE = 0,
 	WARRING_1ST = 1,
 	WARRING_2ND = 2,
-	WARRING_3RD = 2,
+	WARRING_3RD = 3,
 
 	UNSAFE = WARRING_3RD
 } alarm_status_t;
