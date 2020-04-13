@@ -77,8 +77,8 @@ public:
 		this->u8g2->drawGlyph(5, 40, 0x42 - (status.sensor.isOk));
 		this->u8g2->drawFrame(41, 8, 82, 32);
 		this->u8g2->drawBox(123, 20, 5, 8);
-		uint8_t lenght = static_cast<uint8_t>((static_cast<float>((80 * status.batteryLevel)) / 100.0f));
-		this->u8g2->drawBox(42, 10, lenght, 28);
+		uint8_t lenght = static_cast<uint8_t>((static_cast<float>((81 * status.batteryLevel)) / 100.0f));
+		this->u8g2->drawBox(42, 9, lenght, 31);
 		this->u8g2->sendBuffer();
 	}
 };

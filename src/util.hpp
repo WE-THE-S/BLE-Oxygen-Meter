@@ -110,7 +110,7 @@ void whyWakeup() {
 	digitalWrite(POWER_HOLD_PIN, LOW);
 	ESP_LOGI("Battery", "%g V", bat);
 	float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) / (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
-	ESP_LOGI("Battery", "raw Level %u %%", level);
+	ESP_LOGI("Battery", "raw Level %f %%", level);
 	level = min(level, 100.0f);
 	level = max(level, 0.0f);
 	status.batteryLevel = static_cast<uint8_t>(level);
