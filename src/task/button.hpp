@@ -30,11 +30,6 @@ void IRAM_ATTR __power_handler() {
 	if(end - start >= POWER_FLAG_THRESHOLD){
 		ESP_LOGI(TAG, "Power %s", status.powerOn ? "On" : "Off");
 		status.powerOn = !status.powerOn;
-		ESP_ERROR_CHECK(rtc_gpio_hold_dis(POWER_HOLD_PIN));
-		ESP_ERROR_CHECK(rtc_gpio_init(POWER_HOLD_PIN));
-		ESP_ERROR_CHECK(rtc_gpio_set_direction(POWER_HOLD_PIN, RTC_GPIO_MODE_OUTPUT_ONLY));
-		ESP_ERROR_CHECK(rtc_gpio_set_level(POWER_HOLD_PIN, status.powerOn ? HIGH : LOW));
-		ESP_ERROR_CHECK(gpio_hold_en(POWER_HOLD_PIN));
 	}else{
 		ESP_LOGI(TAG, "Power no change");
 	}
