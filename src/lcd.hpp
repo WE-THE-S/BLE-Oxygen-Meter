@@ -46,8 +46,8 @@ public:
 		if(!alreadyBegin){
 			begin();
 		}
-		this->u8g2->setDrawColor(1);
-		this->u8g2->setFontMode(1);
+		this->u8g2->setDrawColor(2);
+		this->u8g2->setFontMode(2);
 		this->u8g2->setFontDirection(0);
 		this->u8g2->clearBuffer();
 		this->u8g2->setFont(u8g2_font_fub25_tf);
@@ -61,12 +61,8 @@ public:
 			str);
 
 		if(status.sensor.warringO2 | status.sensor.requestSos){
-		this->u8g2->setFont(u8g2_font_profont10_tr);
-			memset(str, 0x00, sizeof(char) * 32);
-			sprintf(str, "%.2f%%", status.sensor.o2);
+			this->u8g2->setFont(u8g2_font_profont10_tr);
 			const uint8_t *point = esp_bt_dev_get_address();
-
-			char str[32];
 			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
 						(int)point[0], (int)point[1], (int)point[2], 
 						(int)point[3], (int)point[4], (int)point[5]);
@@ -77,8 +73,12 @@ public:
 		this->u8g2->drawGlyph(5, 40, 0x42 - (status.sensor.isOk));
 		this->u8g2->drawFrame(41, 8, 82, 32);
 		this->u8g2->drawBox(123, 20, 5, 8);
-		uint8_t lenght = static_cast<uint8_t>((static_cast<float>((81 * status.batteryLevel)) / 100.0f));
-		this->u8g2->drawBox(42, 9, lenght, 31);
+		uint8_t lenght = static_cast<uint8_t>((static_cast<float>((80 * status.batteryLevel)) / 100.0f));
+		this->u8g2->drawBox(42, 9, lenght, 30);
+		memset(str, 0x00, sizeof(char) * 32);
+		sprintf(str, "%u", status.batteryLevel);
+		this->u8g2->setFont(u8g2_font_profont22_mr);
+		this->u8g2->drawStr(82 - (this->u8g2->getStrWidth(str) >> 1), 31, str);
 		this->u8g2->sendBuffer();
 	}
 };
