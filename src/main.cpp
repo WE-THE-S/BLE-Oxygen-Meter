@@ -36,9 +36,9 @@ void setup() {
 	digitalWrite(GREEN_LED_PIN, HIGH);
 	digitalWrite(MOTOR_PIN, LOW);
 	//PULL_DOWN
-	attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, RISING);
+	attachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN), __function_handler, FALLING);
 	//PULL_UP
-	attachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN), __power_handler, FALLING);
+	attachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN), __power_handler, RISING);
 	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
 	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
 	Serial2.setRxBufferSize(256);

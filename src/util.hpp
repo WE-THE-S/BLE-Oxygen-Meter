@@ -27,8 +27,8 @@ inline void sleep(uint64_t ms) {
 	detachInterrupt(digitalPinToInterrupt(FUNCTION_BUTTON_PIN));
 	detachInterrupt(digitalPinToInterrupt(POWER_BUTTON_PIN));
 	ESP_ERROR_CHECK(rtc_gpio_set_level(POWER_HOLD_PIN, LOW));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, LOW));
-	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(POWER_BUTTON_PIN, HIGH));
+	ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT64(FUNCTION_BUTTON_PIN), ESP_EXT1_WAKEUP_ALL_LOW));
 	ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(ms * US_TO_MS_FACTOR));
 	esp_deep_sleep_start();
 }
