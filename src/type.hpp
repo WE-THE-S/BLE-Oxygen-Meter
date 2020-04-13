@@ -72,7 +72,7 @@ typedef struct {
 	//배터리 전압
 	double rawBatteryVoltage;
 
-	//배터리 레벨
+	//배터리 레벨 (100 단계)
 	uint8_t batteryLevel;
 	
 	//Alarm레벨

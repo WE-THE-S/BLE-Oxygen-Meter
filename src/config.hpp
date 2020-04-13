@@ -57,6 +57,10 @@ const float O2_SENSOR_WARRING_2ND_THRESHOLD = 19.0f;
 const float O2_SENSOR_WARRING_3RD_THRESHOLD = 18.5f;
 const BaseType_t SENSOR_TASK_CORE_ID = 0;
 
+//배터리 상수
+const float BATTERY_LEVEL_LOW_THRESHOLD = 3.4f;
+const float BATTERY_LEVEL_HIGH_THRESHOLD = 4.1f;
+
 //부저 관련 상수
 const uint32_t BUZZER_FREQ = 2800;
 const uint32_t BUZZER_CHANNEL = 0;

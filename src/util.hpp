@@ -111,6 +111,11 @@ void whyWakeup() {
 	bat = min((bat / 4096 * 3.3), 4096.0);
 	digitalWrite(POWER_HOLD_PIN, LOW);
 	ESP_LOGI("Battery", "%g V", (bat * 2));
+	float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) - (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
+	level = min(level, 100.0f);
+	level = max(level, 0.0f);
+	status.batteryLevel = static_cast<uint8_t>(level);
+
 	if (status.sensor.requestSos | status.sensor.warringO2) {
 		lcd.print();
 	} else {
