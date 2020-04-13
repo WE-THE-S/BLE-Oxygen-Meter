@@ -74,7 +74,6 @@ void whyWakeup() {
 		ble.update(&(status.sensor));
 	}
 	pinMode(POWER_HOLD_PIN, OUTPUT);
-	digitalWrite(POWER_HOLD_PIN, HIGH);
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
@@ -104,16 +103,22 @@ void whyWakeup() {
 			ESP_LOGI(TAG, "Wakeup by unknown source");
 			break;
 		}
+	
 	}
-	double bat = (double)analogRead(BATTERY_ADC_PIN);
-	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
-	digitalWrite(POWER_HOLD_PIN, LOW);
-	ESP_LOGI("Battery", "%g V", bat);
+	double bat = 6;
+	while(bat > 4.5){
+		digitalWrite(POWER_HOLD_PIN, HIGH);
+		bat = (double)analogRead(BATTERY_ADC_PIN);
+		bat = min((bat / 4096 * 3.3), 4096.0) * 2;
+		digitalWrite(POWER_HOLD_PIN, LOW);
+		ESP_LOGI("Battery", "%g V", bat);
+	}
 	float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) / (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
 	ESP_LOGI("Battery", "raw Level %f %%", level);
 	level = min(level, 100.0f);
 	level = max(level, 0.0f);
 	status.batteryLevel = static_cast<uint8_t>(level);
+	
 	ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
 	if (status.sensor.requestSos | status.sensor.warringO2) {
 		lcd.print();
