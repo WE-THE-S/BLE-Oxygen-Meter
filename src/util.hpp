@@ -106,7 +106,6 @@ void whyWakeup() {
 	
 	}
 	digitalWrite(POWER_HOLD_PIN, HIGH);
-	delayMicroseconds(1);
 	double bat = (double)analogRead(BATTERY_ADC_PIN);
 	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
 	digitalWrite(POWER_HOLD_PIN, LOW);
@@ -118,6 +117,10 @@ void whyWakeup() {
 		level = max(level, 0.0f);
 		status.batteryLevel = static_cast<uint8_t>(level);
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
+	}else{
+		if(status.alarmLevel <= alarm_status_t::WARRING_1ST){
+			ESP.restart();
+		}
 	}
 	if (status.sensor.requestSos | status.sensor.warringO2) {
 		lcd.print();
