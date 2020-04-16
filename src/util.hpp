@@ -44,10 +44,19 @@ void whyReset(){
 			status.powerOn = true;
 			sleep(RESET_SLEEP_TIME);
 			break;
-		}		default : {
+		}		
+		default : {
 			ESP_LOGE("Reset", "%d", esp_reset_reason());
 			break;
 		}
+	}
+	pinMode(POWER_HOLD_PIN, OUTPUT);
+	if(status.powerOn){
+		ESP_LOGI("Power Hold", "High");
+		digitalWrite(POWER_HOLD_PIN, HIGH);
+	}else{
+		ESP_LOGI("Power Hold", "Low");
+		digitalWrite(POWER_HOLD_PIN, LOW);
 	}
 }
 
@@ -77,7 +86,6 @@ void whyWakeup() {
 		ble.broadcast();
 		ble.update(&(status.sensor));
 	}
-	pinMode(POWER_HOLD_PIN, OUTPUT);
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
@@ -109,13 +117,19 @@ void whyWakeup() {
 		}
 	
 	}
-	digitalWrite(POWER_HOLD_PIN, HIGH);
 	double bat = 6;
+  	analogReadResolution(12);  
+	analogSetWidth(12);
+	analogSetCycles(8);
+	analogSetSamples(1);
+	analogSetClockDiv(1);
+	analogSetAttenuation(ADC_11db);
+	adcAttachPin(BATTERY_ADC_PIN);
+	analogSetSamples(UINT8_MAX);
 	for(auto i = 0;i<20;i++){
 		double temp = (double)analogRead(BATTERY_ADC_PIN);
 		bat = min(min((temp / 4096 * 3.3), 4096.0) * 2, bat);
 	}
-	digitalWrite(POWER_HOLD_PIN, LOW);
 	ESP_LOGI("Battery", "%g V", bat);
 	if(bat < 4.5){
 		float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) / (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
@@ -124,10 +138,6 @@ void whyWakeup() {
 		level = max(level, 0.0f);
 		status.batteryLevel = static_cast<uint8_t>(level);
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
-	}else{
-		if(status.alarmLevel <= alarm_status_t::WARRING_1ST){
-			ESP.restart();
-		}
 	}
 	if (status.sensor.requestSos | status.sensor.warringO2) {
 		lcd.print();
