@@ -28,8 +28,8 @@ void IRAM_ATTR __power_handler() {
 	ESP_LOGI(TAG, "power pin pressed end : %llums", end);
 	ESP_LOGI(TAG, "power pin pressed : %llums", end - start);
 	if(end - start >= POWER_FLAG_THRESHOLD){
-		ESP_LOGI(TAG, "Power %s", status.powerOn ? "On" : "Off");
 		status.powerOn = !status.powerOn;
+		ESP_LOGI(TAG, "Power %s", status.powerOn ? "On" : "Off");
 	}else{
 		ESP_LOGI(TAG, "Power no change");
 	}

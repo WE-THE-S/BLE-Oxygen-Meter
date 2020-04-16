@@ -67,12 +67,12 @@ void setup() {
 	} else {
 		waitPowerOn();
 		if (status.powerOn) {
-			sleep(1ULL);
+			sleep(RESET_SLEEP_TIME);
 		} else {
 			status.wakeupCount = 0;
 			lcd.clear();
 			//12시간
-			sleep(MS_TO_S_FACTOR * 3600ULL * 12ULL);
+			sleep(POWER_OFF_SLEEP_TIME);
 		}
 	}
 }

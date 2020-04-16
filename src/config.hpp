@@ -28,6 +28,8 @@ const uint64_t BROADCAST_INTERVAL_TIME = 3600;
 const uint64_t OLED_UPDATE_INTERVAL_TIME = 10;
 const uint64_t OLED_UPDATE_TIME = 2;
 const uint64_t POWER_FLAG_THRESHOLD = 1500;
+const uint64_t RESET_SLEEP_TIME = US_TO_MS_FACTOR;
+const uint64_t POWER_OFF_SLEEP_TIME = US_TO_S_FACTOR * 3600ULL * 12ULL;
 
 //핀 정보 상수들
 const gpio_num_t SENSOR_RX_PIN = GPIO_NUM_35;
