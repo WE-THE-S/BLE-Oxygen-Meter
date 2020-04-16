@@ -20,6 +20,9 @@
 
 static pthread_t sensorThread;
 void setup() {
+	pinMode(POWER_HOLD_PIN, OUTPUT);
+	digitalWrite(POWER_HOLD_PIN, HIGH);
+	gpio_hold_en(POWER_HOLD_PIN);
 	ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
 	ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
 	ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);

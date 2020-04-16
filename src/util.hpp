@@ -50,14 +50,6 @@ void whyReset(){
 			break;
 		}
 	}
-	pinMode(POWER_HOLD_PIN, OUTPUT);
-	if(status.powerOn){
-		ESP_LOGI("Power Hold", "High");
-		digitalWrite(POWER_HOLD_PIN, HIGH);
-	}else{
-		ESP_LOGI("Power Hold", "Low");
-		digitalWrite(POWER_HOLD_PIN, LOW);
-	}
 }
 
 void waitPowerOn() {
@@ -117,19 +109,9 @@ void whyWakeup() {
 		}
 	
 	}
-	double bat = 6;
-  	analogReadResolution(12);  
-	analogSetWidth(12);
-	analogSetCycles(8);
-	analogSetSamples(1);
-	analogSetClockDiv(1);
-	analogSetAttenuation(ADC_11db);
 	adcAttachPin(BATTERY_ADC_PIN);
-	analogSetSamples(UINT8_MAX);
-	for(auto i = 0;i<20;i++){
-		double temp = (double)analogRead(BATTERY_ADC_PIN);
-		bat = min(min((temp / 4096 * 3.3), 4096.0) * 2, bat);
-	}
+	double bat = (double)analogRead(BATTERY_ADC_PIN);
+	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
 	ESP_LOGI("Battery", "%g V", bat);
 	if(bat < 4.5){
 		float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) / (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
@@ -139,6 +121,7 @@ void whyWakeup() {
 		status.batteryLevel = static_cast<uint8_t>(level);
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
 	}
+	adc_power_off();
 	if (status.sensor.requestSos | status.sensor.warringO2) {
 		lcd.print();
 	} else {
