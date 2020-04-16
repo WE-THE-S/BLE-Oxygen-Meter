@@ -51,7 +51,6 @@ void setup() {
 		//3.82 MAX
 		//3.3V 이하면 동작 안함
 		ESP_LOGI("Main", "Wakeup Count %u", status.wakeupCount);
-		ESP_LOGI("Button Task", "Execute");
 		//tskIDLE_PRIORITY
 		whyWakeup();
 		if (pthread_create(&sensorThread, NULL, sensorTask, (void *)nullptr)) {

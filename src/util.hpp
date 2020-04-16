@@ -35,15 +35,19 @@ void whyReset(){
 	switch(esp_reset_reason()){
 		case ESP_RST_BROWNOUT : {
 			status.powerOn = false;
-			sleep(1ull);
+			sleep(RESET_SLEEP_TIME);
 			break;
 		}
+		case ESP_RST_SW : 
+			ESP_LOGE("Reset", "SW Reset");
 		case ESP_RST_PANIC : {
 			status.powerOn = true;
-			sleep(1ull);
+			sleep(RESET_SLEEP_TIME);
+			break;
+		}		default : {
+			ESP_LOGE("Reset", "%d", esp_reset_reason());
 			break;
 		}
-		default : break;
 	}
 }
 
@@ -106,8 +110,11 @@ void whyWakeup() {
 	
 	}
 	digitalWrite(POWER_HOLD_PIN, HIGH);
-	double bat = (double)analogRead(BATTERY_ADC_PIN);
-	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
+	double bat = 6;
+	for(auto i = 0;i<20;i++){
+		double temp = (double)analogRead(BATTERY_ADC_PIN);
+		bat = min(min((temp / 4096 * 3.3), 4096.0) * 2, bat);
+	}
 	digitalWrite(POWER_HOLD_PIN, LOW);
 	ESP_LOGI("Battery", "%g V", bat);
 	if(bat < 4.5){
