@@ -20,9 +20,6 @@
 
 static pthread_t sensorThread;
 void setup() {
-	pinMode(POWER_HOLD_PIN, OUTPUT);
-	digitalWrite(POWER_HOLD_PIN, HIGH);
-	gpio_hold_en(POWER_HOLD_PIN);
 	ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
 	ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
 	ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);
@@ -82,7 +79,6 @@ void setup() {
 void loop() {
 	digitalWrite(MOTOR_PIN, LOW);
 	if (status.waitFirstSensorData != 1) {
-		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		if (status.sensor.warringO2 | status.sensor.requestSos) {
 			if(status.sensor.requestSos){
 				status.alarmLevel = UNSAFE;

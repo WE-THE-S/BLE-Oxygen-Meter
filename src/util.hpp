@@ -18,7 +18,6 @@ BLE ble;
 
 inline void sleep(uint64_t ms) {
 	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
-	WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 1);
 	digitalWrite(RED_LED_PIN, HIGH);
 	digitalWrite(GREEN_LED_PIN, HIGH);
 	digitalWrite(MOTOR_PIN, LOW);
@@ -53,6 +52,7 @@ void whyReset(){
 }
 
 void waitPowerOn() {
+	adc_power_off();
 	switch (esp_sleep_get_wakeup_cause()) {
 		case ESP_SLEEP_WAKEUP_UNDEFINED: {
 			ESP_LOGI(TAG, "Wakeup by undefined source");
@@ -68,6 +68,7 @@ void waitPowerOn() {
 	}
 }
 void whyWakeup() {
+	
 	if (status.wakeupCount == BROADCAST_INTERVAL_TIME) {
 		status.bleOn = 1;
 		status.wakeupCount = 0;
@@ -109,19 +110,28 @@ void whyWakeup() {
 		}
 	
 	}
+	
+	pinMode(POWER_HOLD_PIN, OUTPUT);
+	digitalWrite(POWER_HOLD_PIN, HIGH);
+	adc_power_on();
+    int read_raw;
+    ESP_ERROR_CHECK(adc2_config_channel_atten(ADC2_CHANNEL_8, ADC_ATTEN_11db));
+    ESP_ERROR_CHECK(adc2_get_raw(ADC2_CHANNEL_8, ADC_WIDTH_12Bit, &read_raw));
 	adcAttachPin(BATTERY_ADC_PIN);
-	double bat = (double)analogRead(BATTERY_ADC_PIN);
+	double bat = static_cast<double>(read_raw);
 	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
 	ESP_LOGI("Battery", "%g V", bat);
 	if(bat < 4.5){
 		float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) / (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
-		ESP_LOGI("Battery", "update raw Level %f %%", level);
+		ESP_LOGI("Battery", "update raw Level %d %%", read_raw);
+		ESP_LOGI("Battery", "update raw Level double %f %%", level);
 		level = min(level, 100.0f);
 		level = max(level, 0.0f);
 		status.batteryLevel = static_cast<uint8_t>(level);
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
 	}
 	adc_power_off();
+	digitalWrite(POWER_HOLD_PIN, LOW);
 	if (status.sensor.requestSos | status.sensor.warringO2) {
 		lcd.print();
 	} else {
