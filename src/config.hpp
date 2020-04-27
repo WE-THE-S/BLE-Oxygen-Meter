@@ -60,8 +60,9 @@ const float O2_SENSOR_WARRING_3RD_THRESHOLD = 18.5f;
 const BaseType_t SENSOR_TASK_CORE_ID = 0;
 
 //배터리 상수
-const float BATTERY_LEVEL_LOW_THRESHOLD = 3.3f;
+const float BATTERY_LEVEL_LOW_THRESHOLD = 3.35f;
 const float BATTERY_LEVEL_HIGH_THRESHOLD = 4.0f;
+const float BATTERY_LEVEL_POWER_OFF_THRESHOLD = 3.3f;
 const uint8_t DISPLAY_BATTERY_LOW_THRESHOLD = 10;
 
 //부저 관련 상수

@@ -132,7 +132,7 @@ esp_err_t battery_check(){
 	double bat = static_cast<double>(read_raw);
 	bat = min((bat / 4096 * 3.3), 4096.0) * 2;
 	ESP_LOGI("Battery", "%g V", bat);
-	if(bat < 4.5){
+	if(bat > BATTERY_LEVEL_POWER_OFF_THRESHOLD){
 		float level = ((bat - BATTERY_LEVEL_LOW_THRESHOLD) / (BATTERY_LEVEL_HIGH_THRESHOLD - BATTERY_LEVEL_LOW_THRESHOLD)) * 100.0f;
 		ESP_LOGI("Battery", "update raw Level %d %%", read_raw);
 		ESP_LOGI("Battery", "update raw Level double %f %%", level);
@@ -140,8 +140,11 @@ esp_err_t battery_check(){
 		level = max(level, 0.0f);
 		status.batteryLevel = static_cast<uint8_t>(level);
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
-	}
-	if(status.batteryLevel < 1u){
+		if(status.batteryLevel < 1u){
+			status.powerOn = false;
+		}
+	}else{
+		status.batteryLevel = 0;
 		status.powerOn = false;
 	}
 	adc_power_off();
