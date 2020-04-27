@@ -16,6 +16,7 @@ U8G2_SSD1327_WS_128X128_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/OLED_CS_PIN, /* dc=*/O
 LCD lcd(&u8g2);
 BLE ble;
 
+esp_err_t battery_check();
 inline void sleep(uint64_t ms) {
 	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
 	digitalWrite(RED_LED_PIN, HIGH);
@@ -110,7 +111,17 @@ void whyWakeup() {
 		}
 	
 	}
-	
+	battery_check();
+	if (status.sensor.requestSos | status.sensor.warringO2) {
+		lcd.print();
+	} else {
+		if ((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == OLED_UPDATE_TIME) {
+			lcd.print();
+		}
+	}
+}
+
+esp_err_t battery_check(){
 	pinMode(POWER_HOLD_PIN, OUTPUT);
 	digitalWrite(POWER_HOLD_PIN, HIGH);
 	adc_power_on();
@@ -135,16 +146,8 @@ void whyWakeup() {
 	}
 	adc_power_off();
 	digitalWrite(POWER_HOLD_PIN, LOW);
-	if (status.sensor.requestSos | status.sensor.warringO2) {
-		lcd.print();
-	} else {
-		if ((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == OLED_UPDATE_TIME) {
-			lcd.print();
-		}
-	}
+	return ESP_OK;
 }
-
-
 esp_err_t alarm(const alarm_status_t alarm){
 	if(status.alarmLevel != SAFE){
 		ESP_ERROR_CHECK(ble.broadcast());
