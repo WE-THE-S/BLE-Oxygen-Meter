@@ -130,6 +130,9 @@ void whyWakeup() {
 		status.batteryLevel = static_cast<uint8_t>(level);
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
 	}
+	if(status.batteryLevel < 1u){
+		status.powerOn = false;
+	}
 	adc_power_off();
 	digitalWrite(POWER_HOLD_PIN, LOW);
 	if (status.sensor.requestSos | status.sensor.warringO2) {
