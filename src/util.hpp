@@ -140,9 +140,6 @@ esp_err_t battery_check(){
 		level = max(level, 0.0f);
 		status.batteryLevel = static_cast<uint8_t>(level);
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
-		if(status.batteryLevel < 1u){
-			status.powerOn = false;
-		}
 	}else{
 		status.batteryLevel = 0;
 		status.powerOn = false;
