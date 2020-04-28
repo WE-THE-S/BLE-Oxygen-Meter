@@ -111,11 +111,12 @@ public:
 		return ESP_OK;
 	}
 
-	esp_err_t update(sensor_t *sensor) {
+	esp_err_t update(const sensor_t *sensor) {
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		ESP_LOGD(TAG, "BT Update");
 		//데이터 설정
-		adv_config.p_manufacturer_data = sensor->bytes;
+		auto raw = const_cast<sensor_t*>(sensor);
+		adv_config.p_manufacturer_data = raw->bytes;
 		adv_config.manufacturer_len = 13;
 
 		//BLE 에러 체크 및 설정

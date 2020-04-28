@@ -84,7 +84,7 @@ void loop() {
 			if(status.sensor.requestSos){
 				status.alarmLevel = UNSAFE;
 			}
-			alarm(status.alarmLevel);
+			alarm(status.alarmLevel, status.sensor);
 		} else {
 			digitalWrite(MOTOR_PIN, LOW);
 			sleep(NORMAL_SLEEP_TIME_MS);

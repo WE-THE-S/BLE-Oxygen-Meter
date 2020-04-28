@@ -143,15 +143,16 @@ esp_err_t battery_check(){
 	}else{
 		status.batteryLevel = 0;
 		status.powerOn = false;
+		sleep(1u);
 	}
 	adc_power_off();
 	digitalWrite(POWER_HOLD_PIN, LOW);
 	return ESP_OK;
 }
-esp_err_t alarm(const alarm_status_t alarm){
-	if(status.alarmLevel != SAFE){
+esp_err_t alarm(const alarm_status_t alarm, const sensor_t sensor){
+	if(alarm != SAFE){
 		ESP_ERROR_CHECK(ble.broadcast());
-		ESP_ERROR_CHECK(ble.update(&(status.sensor)));
+		ESP_ERROR_CHECK(ble.update(&sensor));
 		lcd.print();
 		const uint64_t pendingTime = millis() / 1000;
 		digitalWrite(MOTOR_PIN, pendingTime & 1 ? HIGH : LOW);
