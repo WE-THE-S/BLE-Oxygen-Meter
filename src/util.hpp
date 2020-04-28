@@ -142,8 +142,12 @@ esp_err_t battery_check(){
 		ESP_LOGI("Battery", "Level %u %%", status.batteryLevel);
 	}else{
 		status.batteryLevel = 0;
-		status.powerOn = false;
-		sleep(1u);
+		status.sosEnable = 0;
+		status.powerOn = 0;
+		status.sensor.warringO2 = 0;
+		status.sensor.requestSos = 0;
+		lcd.clear();
+		sleep(POWER_OFF_SLEEP_TIME);
 	}
 	adc_power_off();
 	digitalWrite(POWER_HOLD_PIN, LOW);
