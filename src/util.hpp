@@ -32,6 +32,7 @@ inline void sleep(uint64_t ms) {
 }
 
 void whyReset(){
+	ESP_LOGI("Version", "FW Version : %u", FIRMWARE_VERSION);
 	switch(esp_reset_reason()){
 		case ESP_RST_BROWNOUT : {
 			status.powerOn = false;

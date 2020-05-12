@@ -74,10 +74,10 @@ const uint32_t BUZZER_OFF = 0;
 
 //경고 관련 상수
 const uint8_t WARRING_FLAG_THRESHOLD = 3;
-const uint8_t WARRING_FLAG_RESET_THRESHOLD = 15;
-
+const uint8_t WARRING_FLAG_RESET_THREHOLD = 15;
 
 //계속 유지되야 하는 데이터들
+const uint32_t FIRMWARE_VERSION = 3;
 //디바이스 정보
 extern RTC_DATA_ATTR device_status_t status;
 

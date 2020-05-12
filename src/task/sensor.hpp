@@ -98,7 +98,7 @@ void *sensorTask(void *test) {
 			break;
 		}
 		default : {
-			if(status.warringCount == WARRING_FLAG_RESET_THRESHOLD){
+			if(status.warringCount == WARRING_FLAG_RESET_THREHOLD){
 				status.warringCount = WARRING_FLAG_THRESHOLD;
 			}
 			status.warringCount++;
