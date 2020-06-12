@@ -63,9 +63,9 @@ public:
 		if(status.sensor.warringO2 | status.sensor.requestSos){
 			this->u8g2->setFont(u8g2_font_profont10_tr);
 			const uint8_t *point = esp_bt_dev_get_address();
-			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
-						(int)point[0], (int)point[1], (int)point[2], 
-						(int)point[3], (int)point[4], (int)point[5]);
+			sprintf(str, "(%04hX) %02X:%02X:%02X:%02X:%02X:%02X", 
+						status.ssid, point[0], point[1], point[2], 
+						point[3], point[4], point[5]);
 			this->u8g2->drawStr(
 				(this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1, 120, str);
 		}
