@@ -63,12 +63,19 @@ private:
 	const char *TAG = "BLE";
 	bool alreadyInit;
 
+	esp_err_t setName(){
+		char str[32] = {0, };
+		sprintf(str, "Oxygen Meter(%04hX)", status.ssid);
+		return esp_ble_gap_set_device_name(str);
+	}
 public:
 	BLE() : alreadyInit(false) {
 	}
+	
 	void begin() {
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 	}
+	
 	esp_err_t broadcast() {
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		if (!alreadyInit) {
@@ -95,7 +102,8 @@ public:
 				}
 			}
 			ESP_LOGD(TAG, "BT Enable");
-			ESP_ERROR_CHECK(esp_ble_gap_set_device_name("Oxygen Meter"));
+			
+			ESP_ERROR_CHECK(this->setName());
 			ESP_ERROR_CHECK(esp_ble_gap_register_callback(gap_handler));
 			alreadyInit = true;
 		}
