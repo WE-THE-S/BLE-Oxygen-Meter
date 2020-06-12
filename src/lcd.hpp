@@ -28,7 +28,7 @@ public:
 	void begin() {
 		if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_UNDEFINED) {
             this->u8g2->beginSimple();
-            this->u8g2->setPowerSave(0);
+			this->u8g2->setPowerSave(status.needLcdOn ? 1u : 0u);
 		} else {
             this->u8g2->begin();
 		}

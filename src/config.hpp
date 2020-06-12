@@ -65,6 +65,7 @@ const float BATTERY_LEVEL_HIGH_THRESHOLD = 4.0f;
 const float BATTERY_LEVEL_POWER_OFF_THRESHOLD = 3.32f;
 const uint8_t DISPLAY_BATTERY_LOW_THRESHOLD = 5;
 const uint8_t NEED_DISPLAY_BATERRY_LEVEL_THRESHOLD = 10;
+const uint8_t LCD_ON_COUNT = 3;
 
 //부저 관련 상수
 const uint32_t BUZZER_FREQ = 2800;

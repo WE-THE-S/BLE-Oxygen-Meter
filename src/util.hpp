@@ -74,9 +74,15 @@ void waitPowerOn() {
 		}
 		default : break;
 	}
+
 }
 void whyWakeup() {
-	
+	if(status.needLcdOn){
+		if(status.ledOnWakeupCount + LCD_ON_COUNT > status.wakeupCount){
+			status.needLcdOn = 0;
+			status.ledOnWakeupCount = 0;
+		}
+	}
 	if (status.wakeupCount == BROADCAST_INTERVAL_TIME) {
 		status.bleOn = 1;
 		status.wakeupCount = 0;
