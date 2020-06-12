@@ -8,8 +8,8 @@
 #include <esp_sleep.h>
 #include <soc/uart_channel.h>
 
-static uint64_t lastHandle;
 void IRAM_ATTR __function_handler() {
+	static uint64_t lastHandle;
 	if((millis() - lastHandle) > 1){
 		lastHandle = millis();
 		status.sosEnable = !status.sosEnable;

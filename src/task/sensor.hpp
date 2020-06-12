@@ -126,5 +126,6 @@ void *sensorTask(void *test) {
 		status.waitFirstSensorData = 0;
 	}
 	status.waitSensorData = 0;
+	return null_ptr;
 }
 #endif
