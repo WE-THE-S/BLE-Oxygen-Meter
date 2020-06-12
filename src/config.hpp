@@ -64,6 +64,7 @@ const float BATTERY_LEVEL_LOW_THRESHOLD = 3.35f;
 const float BATTERY_LEVEL_HIGH_THRESHOLD = 4.0f;
 const float BATTERY_LEVEL_POWER_OFF_THRESHOLD = 3.32f;
 const uint8_t DISPLAY_BATTERY_LOW_THRESHOLD = 5;
+const uint8_t NEED_DISPLAY_BATERRY_LEVEL_THRESHOLD = 10;
 
 //부저 관련 상수
 const uint32_t BUZZER_FREQ = 2800;
@@ -78,6 +79,7 @@ const uint8_t WARRING_FLAG_RESET_THREHOLD = 15;
 
 //계속 유지되야 하는 데이터들
 const uint32_t FIRMWARE_VERSION = 3;
+
 //디바이스 정보
 extern RTC_DATA_ATTR device_status_t status;
 
