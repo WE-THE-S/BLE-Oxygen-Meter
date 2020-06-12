@@ -82,6 +82,7 @@ void *sensorTask(void *test) {
 	status.sensor.requestSos = status.sosEnable;
 	alarm_status_t nowAlarmLevel = SAFE;
 
+	
 	if(temp.o2 <= O2_SENSOR_WARRING_3RD_THRESHOLD){
 		nowAlarmLevel = WARRING_3RD;
 	}else if(temp.o2 <= O2_SENSOR_WARRING_2ND_THRESHOLD){
@@ -89,12 +90,18 @@ void *sensorTask(void *test) {
 	}else if(temp.o2 <= O2_SENSOR_WARRING_1ST_THRESHOLD){
 		nowAlarmLevel = WARRING_1ST;
 	}else{
-		nowAlarmLevel = SAFE;
+		if(temp.o2 >= O2_SENSOR_WRRRING_HIGH_THRESHOLD){
+			status.sensor.warringO2High = 1;
+			nowAlarmLevel = WARRING_3RD;
+		}else{
+			nowAlarmLevel = SAFE;
+		}
 	}
 	switch(nowAlarmLevel){
 		case SAFE : {
 			status.warringCount = 0;
-			status.sensor.warringO2 = 0;
+			status.sensor.warringO2Low = 0;
+			status.sensor.warringO2High = 0;
 			break;
 		}
 		default : {
@@ -103,9 +110,9 @@ void *sensorTask(void *test) {
 			}
 			status.warringCount++;
 			if(status.warringCount >= WARRING_FLAG_THRESHOLD){
-				status.sensor.warringO2 = 1;
+				status.sensor.warringO2Low = 1;
 			}else{
-				status.sensor.warringO2 = 0;
+				status.sensor.warringO2Low = 0;
 			}
 			break;
 		}
@@ -117,8 +124,8 @@ void *sensorTask(void *test) {
 	ESP_LOGI("Sensor", "offset setup %lums", millis());
 	ESP_LOGI("Status", "Warring Count : %u", status.warringCount);
 	ESP_LOGI("Status", "requestSos : %d", status.sensor.requestSos);
-	ESP_LOGI("Status", "warringO2 : %d", status.sensor.warringO2);
-	if (!(status.sensor.warringO2 | status.sensor.requestSos)) {
+	ESP_LOGI("Status", "warringO2Low : %d", status.sensor.warringO2Low);
+	if (!(status.sensor.warringO2Low | status.sensor.requestSos | status.sensor.warringO2High)) {
 		uint64_t sleepTime = NORMAL_SLEEP_TIME_MS;
 		sleep(sleepTime);
 	}

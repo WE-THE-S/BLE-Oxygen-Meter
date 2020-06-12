@@ -80,7 +80,7 @@ void loop() {
 	digitalWrite(MOTOR_PIN, LOW);
 	if (status.waitFirstSensorData != 1) {
 		battery_check();
-		if (status.sensor.warringO2 | status.sensor.requestSos) {
+		if (status.sensor.warringO2Low | status.sensor.requestSos | status.sensor.warringO2High) {
 			if(status.sensor.requestSos){
 				status.alarmLevel = UNSAFE;
 			}

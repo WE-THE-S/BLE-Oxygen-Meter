@@ -25,8 +25,9 @@ typedef union {
 		//아래부터 채워짐 
 		uint8_t isOk : 1;
 		uint8_t requestSos : 1;
-		uint8_t warringO2 : 1;
-		uint8_t dummy : 5;
+		uint8_t warringO2Low : 1;
+		uint8_t warringO2High : 1;
+		uint8_t dummy : 4;
 	};
 	uint8_t bytes[];
 } sensor_t;

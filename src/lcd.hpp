@@ -60,7 +60,7 @@ public:
 			this->u8g2->getDisplayHeight() - (this->u8g2->getMaxCharHeight() >> 1),
 			str);
 
-		if(status.sensor.warringO2 | status.sensor.requestSos){
+		if(status.sensor.warringO2Low | status.sensor.requestSos | status.sensor.warringO2High){
 			this->u8g2->setFont(u8g2_font_profont10_tr);
 			const uint8_t *point = esp_bt_dev_get_address();
 			sprintf(str, "(%04hX) %02X:%02X:%02X:%02X:%02X:%02X", 

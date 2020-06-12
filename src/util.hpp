@@ -125,7 +125,7 @@ void whyWakeup() {
 	
 	}
 	battery_check();
-	if (status.sensor.requestSos | status.sensor.warringO2) {
+	if (status.sensor.requestSos | status.sensor.warringO2High| status.sensor.warringO2Low) {
 		lcd.print();
 	} else {
 		if ((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == OLED_UPDATE_TIME) {
@@ -157,7 +157,8 @@ esp_err_t battery_check(){
 		status.batteryLevel = 0;
 		status.sosEnable = 0;
 		status.powerOn = 0;
-		status.sensor.warringO2 = 0;
+		status.sensor.warringO2Low = 0;
+		status.sensor.warringO2High = 0;
 		status.sensor.requestSos = 0;
 		lcd.clear();
 		sleep(POWER_OFF_SLEEP_TIME);
