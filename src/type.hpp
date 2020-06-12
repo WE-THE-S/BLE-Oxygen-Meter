@@ -71,13 +71,16 @@ typedef struct {
 
 	//warring count
 	uint16_t warringCount : 4;
-	
+
 	//배터리 전압
 	double rawBatteryVoltage;
 
 	//배터리 레벨 (100 단계)
 	uint8_t batteryLevel;
 	
+	uint8_t checkSendBT : 1;
+
+	uint8_t dummy : 7;
 	//Alarm레벨
 	alarm_status_t alarmLevel;
 

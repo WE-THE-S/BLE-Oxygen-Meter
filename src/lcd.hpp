@@ -71,13 +71,15 @@ public:
 		}
 		this->u8g2->setFont(u8g2_font_open_iconic_check_4x_t);
 		this->u8g2->drawGlyph(5, 40, 0x42 - (status.sensor.isOk));
-		this->u8g2->drawFrame(41, 8, 82, 32);
+		this->u8g2->setFont(u8g2_font_open_iconic_embedded_4x_t);
+		this->u8g2->drawGlyph(45, 40, 0x4a);
+		this->u8g2->drawFrame(81, 8, 42, 32);
 		this->u8g2->drawBox(123, 20, 5, 8);
 		this->u8g2->setFont(u8g2_font_profont22_tr);
 		memset(str, 0x00, sizeof(char) * 32);
 		if(status.batteryLevel > DISPLAY_BATTERY_LOW_THRESHOLD){
-			uint8_t lenght = static_cast<uint8_t>((static_cast<float>((80 * status.batteryLevel)) / 100.0f));
-			this->u8g2->drawBox(42, 9, lenght, 30);
+			uint8_t lenght = static_cast<uint8_t>((static_cast<float>((40 * status.batteryLevel)) / 100.0f));
+			this->u8g2->drawBox(82, 9, lenght, 30);
 			sprintf(str, "%u", status.batteryLevel);
 		}else{
 			sprintf(str, "LOW");
