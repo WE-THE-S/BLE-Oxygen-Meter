@@ -45,6 +45,9 @@ typedef enum {
  * @brief 기기의 현 상태를 저장하는 구조체
  */
 typedef struct {
+	// SSID에 포함됄 MAC HASH
+	uint32_t ssid;
+	
 	//얼마나 깨어났는지, 최대 63
 	uint16_t wakeupCount : 6;
 

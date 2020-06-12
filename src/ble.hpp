@@ -44,7 +44,6 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 	switch (event) {
 		case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT: {
 			const uint8_t *point = esp_bt_dev_get_address();
-
 			char str[32];
 			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
 						(int)point[0], (int)point[1], (int)point[2], 
