@@ -33,12 +33,6 @@ inline void sleep(uint64_t ms) {
 
 void whyReset(){
 	ESP_LOGI("Version", "FW Version : %u", FIRMWARE_VERSION);
-	const uint8_t *addr = esp_bt_dev_get_address();
-	for(uint_fast8_t i = 0;i<3;i++){
-		uint_fast16_t value = static_cast<uint_fast16_t>(addr[i + 1]);
-		value |= (static_cast<uint_fast16_t>(addr[i]) << 8);
-		status.ssid ^= value;
-	}
 	switch(esp_reset_reason()){
 		case ESP_RST_BROWNOUT : {
 			status.powerOn = false;

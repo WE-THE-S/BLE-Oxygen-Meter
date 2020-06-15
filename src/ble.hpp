@@ -102,7 +102,12 @@ public:
 				}
 			}
 			ESP_LOGD(TAG, "BT Enable");
-			
+			const uint8_t *addr = esp_bt_dev_get_address();
+			status.ssid = 0x0;
+			for(uint8_t i = 0;i<3;i++){
+				uint16_t value = (static_cast<uint16_t>(addr[i]) << 8) + addr[i + 1];
+				status.ssid ^= value;
+			}
 			ESP_ERROR_CHECK(this->setName());
 			ESP_ERROR_CHECK(esp_ble_gap_register_callback(gap_handler));
 			alreadyInit = true;

@@ -28,7 +28,6 @@ public:
 	void begin() {
 		if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_UNDEFINED) {
             this->u8g2->beginSimple();
-			this->u8g2->setPowerSave(status.needLcdOn ? 1u : 0u);
 		} else {
             this->u8g2->begin();
 		}
@@ -40,12 +39,14 @@ public:
 			begin();
 		}
 		this->u8g2->clear();
+		this->u8g2->setPowerSave(status.needLcdOn ? 1u : 0u);
 	}
 
 	void print() {
 		if(!alreadyBegin){
 			begin();
 		}
+		this->u8g2->setPowerSave(status.needLcdOn ? 1u : 0u);
 		this->u8g2->setDrawColor(2);
 		this->u8g2->setFontMode(2);
 		this->u8g2->setFontDirection(0);
