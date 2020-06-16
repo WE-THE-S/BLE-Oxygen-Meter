@@ -36,7 +36,7 @@ void IRAM_ATTR __power_handler() {
 	ESP_LOGI(TAG, "power pin pressed : %llums", time);
 	if(time >= POWER_FLAG_THRESHOLD){
 		if(!status.powerOn && time >= UPGRADE_FLAG_THRESHOLD){
-			OTA* ota = OTA::getInstance();
+			auto ota = OTA::getInstance();
 			ota->start();
 		}
 		status.powerOn = !status.powerOn;

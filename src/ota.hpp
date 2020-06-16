@@ -1,6 +1,7 @@
 #ifndef __OTA_HPP__
 #define __OTA_HPP__
 
+#include <Arduino.h>
 #include <esp_attr.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -8,10 +9,11 @@
 #include <ESPmDNS.h>
 #include <Update.h>
 #include "./config.hpp"
-
+#include "./type.hpp"
+#include "ble.hpp"
  
 /* Server Index Page */
-DRAM_ATTR const char* serverIndex = "
+const char* DRAM_ATTR serverIndex = "\
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>\
 <form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>\
 <input type='file' name='update' id='file' onchange='sub(this)' style=display:none>\
@@ -62,6 +64,8 @@ form{background:#fff;max-width:258px;margin:75px auto;padding:30px;border-radius
 .btn{background:#3498db;color:#fff;cursor:pointer}</style>";
 
 class OTA {
+    public:
+        WebServer* server;
     private:
         const char* ssid = "THES3";
         const char* password = "1234123412";
@@ -70,30 +74,33 @@ class OTA {
             while (WiFi.status() != WL_CONNECTED) {
                 delay(500);
             }
+            this->server = new WebServer(80);
         };
-        WebServer server(80);
     public:
-        OTA* getInstance() const {
+        static OTA* getInstance() {
             static OTA instance;
             return &instance;
         }
+        
         void start(){
-            MDNS.begin(host);
+            char ssid[16] = {0, };
+            sprintf(ssid, "O2_%04hX", status.ssid);
+            MDNS.begin(ssid);
             ESP_LOGI(typename(this),"mDNS responder started");
             /*return index page which is stored in serverIndex */
-            server.on("/", HTTP_GET, []() {
-                server.sendHeader("Connection", "close");
-                server.send(200, "text/html", serverIndex);
+            this->server->on("/", HTTP_GET, []() {
+                OTA::getInstance()->server->sendHeader("Connection", "close");
+                OTA::getInstance()->server->send(200, "text/html", serverIndex);
             });
             /*handling uploading firmware file */
-            server.on("/update", HTTP_POST, []() {
-                server.sendHeader("Connection", "close");
-                server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+            this->server->on("/update", HTTP_POST, []() {
+                OTA::getInstance()->server->sendHeader("Connection", "close");
+                OTA::getInstance()->server->send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
                 ESP.restart();
             }, []() {
-                HTTPUpload& upload = server.upload();
+                HTTPUpload& upload = OTA::getInstance()->server->upload();
                 if (upload.status == UPLOAD_FILE_START) {
-                ESP_LOGA(typename(this), "Update: %s\n", upload.filename.c_str());
+                ESP_LOGI("ota", "Update: %s\n", upload.filename.c_str());
                 if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
                     Update.printError(Serial);
                 }
@@ -104,15 +111,15 @@ class OTA {
                 }
                 } else if (upload.status == UPLOAD_FILE_END) {
                 if (Update.end(true)) { //true to set the size to the current progress
-                    ESP_LOGA(typename(this), "Update Success: %u\nRebooting...\n", upload.totalSize);
+                    ESP_LOGI("ota", "Update Success: %u\nRebooting...\n", upload.totalSize);
                 } else {
                     Update.printError(Serial);
                 }
                 }
             });
-            server.begin();
+            this->server->begin();
             while(1){
-                server.handleClient();
+                this->server->handleClient();
                 delay(1);
             }
         }
