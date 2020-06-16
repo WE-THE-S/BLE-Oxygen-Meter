@@ -18,6 +18,7 @@ BLE ble;
 
 esp_err_t battery_check();
 inline void sleep(uint64_t ms) {
+	status.checkSendBT = false;
 	ESP_LOGI("Sleep", "Go To sleep... %llu ms", ms);
 	digitalWrite(RED_LED_PIN, HIGH);
 	digitalWrite(GREEN_LED_PIN, HIGH);
