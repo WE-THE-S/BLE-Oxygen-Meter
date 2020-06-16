@@ -122,10 +122,10 @@ void whyWakeup() {
 	
 	}
 	battery_check();
-	if (status.sensor.requestSos | status.sensor.warringO2High| status.sensor.warringO2Low) {
+	if (status.sensor.flag) {
 		lcd.print();
 	} else {
-		if ((status.wakeupCount % OLED_UPDATE_INTERVAL_TIME) == OLED_UPDATE_TIME) {
+		if (status.needLcdOn) {
 			lcd.print();
 		}
 	}
