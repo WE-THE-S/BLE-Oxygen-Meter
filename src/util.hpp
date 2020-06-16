@@ -73,9 +73,10 @@ void waitPowerOn() {
 
 }
 void whyWakeup() {
-
+	ESP_LOGI(TAG, "needLcdOn : %u", status.needLcdOn);
 	if(status.needLcdOn){
-		if(status.lcdOnWakeupCount + LCD_ON_COUNT > status.wakeupCount){
+		const uint8_t target = (status.lcdOnWakeupCount + LCD_ON_COUNT) & 0x3f;
+		if(target == status.wakeupCount){
 			status.needLcdOn = 0;
 			status.lcdOnWakeupTimestamp = 0;
 			status.lcdOnWakeupCount = 0;
@@ -123,7 +124,7 @@ void whyWakeup() {
 	
 	}
 	battery_check();
-	if (status.sensor.flag) {
+	if (status.sensor.flag > 1) {
 		lcd.print();
 	} else {
 		if (status.needLcdOn) {

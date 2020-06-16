@@ -44,9 +44,9 @@ void setup() {
 	Serial2.setRxBufferSize(256);
 	if (status.powerOn) {
 		status.waitFirstSensorData = 1;
-		status.wakeupCount++;
 		status.waitSensorData = 1;
 		status.waitProcessDone = 1;
+		status.wakeupCount++;
 		//3.860742 MAX CHARGE
 		//3.82 MAX
 		//3.3V 이하면 동작 안함
@@ -79,8 +79,9 @@ void setup() {
 void loop() {
 	digitalWrite(MOTOR_PIN, LOW);
 	if (status.waitFirstSensorData != 1) {
+		ESP_LOGI("loop", "loop flag : %u", status.sensor.flag);
 		battery_check();
-		if (status.sensor.flag) {
+		if (status.sensor.flag > 1) {
 			if(status.sensor.requestSos){
 				status.alarmLevel = UNSAFE;
 			}
@@ -89,6 +90,7 @@ void loop() {
 			digitalWrite(MOTOR_PIN, LOW);
 			sleep(NORMAL_SLEEP_TIME_MS);
 		}
+
 		if (!status.waitSensorData) {
 			if (pthread_create(&sensorThread, NULL, sensorTask, (void *)nullptr)) {
 				ESP_LOGE("Thread", "create error");

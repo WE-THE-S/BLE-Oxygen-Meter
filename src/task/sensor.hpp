@@ -125,11 +125,11 @@ void *sensorTask(void *test) {
 	ESP_LOGI("Status", "Warring Count : %u", status.warringCount);
 	ESP_LOGI("Status", "requestSos : %d", status.sensor.requestSos);
 	ESP_LOGI("Status", "warringO2Low : %d", status.sensor.warringO2Low);
-	if (!(status.sensor.flag)) {
+	if (status.sensor.flag < 2) {
 		uint64_t sleepTime = NORMAL_SLEEP_TIME_MS;
 		sleep(sleepTime);
 	}
-	if(status.waitFirstSensorData == 1){
+	if(status.waitFirstSensorData != 0){
 		status.waitFirstSensorData = 0;
 	}
 	status.waitSensorData = 0;
