@@ -124,13 +124,7 @@ void whyWakeup() {
 	
 	}
 	battery_check();
-	if (status.sensor.flag > 1) {
-		lcd.print();
-	} else {
-		if (status.needLcdOn) {
-			lcd.print();
-		}
-	}
+	lcd.print();
 }
 
 esp_err_t battery_check(){
