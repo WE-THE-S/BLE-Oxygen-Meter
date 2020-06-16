@@ -66,7 +66,9 @@ private:
 	esp_err_t setName(){
 		char str[32] = {0, };
 		sprintf(str, "Oxygen Meter(%04hX)", status.ssid);
+		ESP_LOGI(TAG, "SSID : %s", str);
 		return esp_ble_gap_set_device_name(str);
+		
 	}
 public:
 	BLE() : alreadyInit(false) {

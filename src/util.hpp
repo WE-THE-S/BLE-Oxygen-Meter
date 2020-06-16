@@ -72,10 +72,12 @@ void waitPowerOn() {
 
 }
 void whyWakeup() {
+
 	if(status.needLcdOn){
-		if(status.ledOnWakeupCount + LCD_ON_COUNT > status.wakeupCount){
+		if(status.lcdOnWakeupCount + LCD_ON_COUNT > status.wakeupCount){
 			status.needLcdOn = 0;
-			status.ledOnWakeupCount = 0;
+			status.lcdOnWakeupTimestamp = 0;
+			status.lcdOnWakeupCount = 0;
 		}
 	}
 	if (status.wakeupCount == BROADCAST_INTERVAL_TIME) {
@@ -181,4 +183,4 @@ esp_err_t alarm(const alarm_status_t alarm, const sensor_t sensor){
 }
 
 
-#endif
+#endif 

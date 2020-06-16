@@ -84,7 +84,10 @@ typedef struct {
 	uint8_t needLcdOn : 1;
 
 	//LCD가 켜졋을때 깨어난 횟수
-	uint8_t ledOnWakeupCount : 6;
+	uint8_t lcdOnWakeupCount : 6;
+
+	//LCD가 켜졋을때 깨어난 횟수
+	uint64_t lcdOnWakeupTimestamp;
 	//Alarm레벨
 	alarm_status_t alarmLevel;
 

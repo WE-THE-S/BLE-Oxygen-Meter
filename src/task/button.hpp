@@ -10,7 +10,7 @@
 
 void IRAM_ATTR __function_handler() {
 	status.needLcdOn = 1;
-	status.ledOnWakeupCount = status.wakeupCount;
+	status.lcdOnWakeupCount = status.wakeupCount;
 	static uint64_t lastHandle;
 	if((millis() - lastHandle) > 1){
 		lastHandle = millis();
@@ -19,13 +19,14 @@ void IRAM_ATTR __function_handler() {
 		while(digitalRead(FUNCTION_BUTTON_PIN) != HIGH);
 	}
 	lastHandle = millis();
+	status.lcdOnWakeupTimestamp = lastHandle;
 }
 
 void IRAM_ATTR __power_handler() {
 	//어차피 꺼질때만 실행 될 것
 	uint64_t start = millis(); 
 	status.needLcdOn = 1;
-	status.ledOnWakeupCount = status.wakeupCount;
+	status.lcdOnWakeupCount = status.wakeupCount;
 	while(digitalRead(POWER_BUTTON_PIN) != LOW);
 	uint64_t end = millis();
 	ESP_LOGI(TAG, "power pin pressed start : %llums", start);
@@ -37,6 +38,7 @@ void IRAM_ATTR __power_handler() {
 	}else{
 		ESP_LOGI(TAG, "Power no change");
 	}
+	status.lcdOnWakeupTimestamp = end;
 }
 
 #endif
