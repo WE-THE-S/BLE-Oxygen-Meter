@@ -103,4 +103,9 @@ void loop() {
 	} else {
 		delay(500);
 	}
+	if(status.lcdOnWakeupTimestamp + LCD_ON_TIMESTAMP < millis()){
+		status.lcdOnWakeupTimestamp = 0;
+		status.lcdOnWakeupCount = 0;
+		status.needLcdOn = 0;
+	}
 }
