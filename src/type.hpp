@@ -5,7 +5,7 @@
 #include <inttypes.h>
 #include "./config.hpp"
 
-
+#pragma pack(push, 1)
 /**
  * @struct sensor_t
  * @brief 센서 데이터 구조체
@@ -91,4 +91,5 @@ typedef struct {
 	sensor_t sensor;
 } device_status_t;
 
+#pragma pack(pop)
 #endif
