@@ -115,6 +115,7 @@ public:
 		return ESP_OK;
 	}
 	esp_err_t stop() {
+		status.checkSendBT = false;
 		if (btStarted()) {
 			ESP_ERROR_CHECK(esp_bluedroid_disable());
 			ESP_ERROR_CHECK(esp_bluedroid_deinit());
@@ -124,6 +125,7 @@ public:
 	}
 
 	esp_err_t update(const sensor_t *sensor) {
+		status.checkSendBT = true;
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		ESP_LOGD(TAG, "BT Update");
 		//데이터 설정

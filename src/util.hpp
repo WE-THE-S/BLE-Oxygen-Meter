@@ -43,6 +43,7 @@ void whyReset(){
 			ESP_LOGE("Reset", "SW Reset");
 		case ESP_RST_PANIC : {
 			status.powerOn = true;
+			status.checkSendBT = false;
 			sleep(RESET_SLEEP_TIME);
 			break;
 		}		

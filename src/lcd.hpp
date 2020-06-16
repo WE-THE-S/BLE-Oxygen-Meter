@@ -39,14 +39,14 @@ public:
 			begin();
 		}
 		this->u8g2->clear();
-		this->u8g2->setPowerSave(status.needLcdOn ? 1u : 0u);
+		this->u8g2->setPowerSave(!status.needLcdOn);
 	}
 
 	void print() {
 		if(!alreadyBegin){
 			begin();
 		}
-		this->u8g2->setPowerSave(status.needLcdOn ? 1u : 0u);
+		this->u8g2->setPowerSave(!status.needLcdOn);
 		this->u8g2->setDrawColor(2);
 		this->u8g2->setFontMode(2);
 		this->u8g2->setFontDirection(0);
