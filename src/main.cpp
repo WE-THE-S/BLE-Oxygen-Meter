@@ -46,8 +46,8 @@ void setup() {
 	if(status.OTAMode){
 		BLE ble;
 		ble.broadcast();
-		lcd.otaView();
 		auto ota = OTA::getInstance();
+		lcd.otaView();
 		ota->start();
 	}
 
