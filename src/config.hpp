@@ -17,7 +17,6 @@
 #ifdef U8X8_HAVE_HW_I2C
 #include <Wire.h>
 #endif
-
 //타이머 계산용 상수
 const uint64_t SENSOR_TIMEOUT = 1;
 const uint64_t NORMAL_SLEEP_TIME_MS = 1000;
@@ -82,9 +81,10 @@ const uint32_t BUZZER_OFF = 0;
 const uint8_t WARRING_FLAG_THRESHOLD = 3;
 const uint8_t WARRING_FLAG_RESET_THREHOLD = 15;
 
-//계속 유지되야 하는 데이터들
-const uint32_t FIRMWARE_VERSION = 5u;
-const char* FIRMWARE_ID = (String("20200616_") + String(FIRMWARE_VERSION)).c_str();
+//펌웨어 정보
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+#define FIRMWARE_ID __DATE__ "[" __TIME__ "] " STR(FIRMWARE_VERSION)
 
 //디바이스 정보
 extern RTC_DATA_ATTR device_status_t status;
