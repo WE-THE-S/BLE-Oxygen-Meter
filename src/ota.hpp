@@ -8,9 +8,10 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Update.h>
+
 #include "./config.hpp"
 #include "./type.hpp"
-#include "ble.hpp"
+#include "./ble.hpp"
  
 /* Server Index Page */
 const char* DRAM_ATTR serverIndex = "\
@@ -83,8 +84,12 @@ class OTA {
         }
         
         void start(){
+            BLE ble;
+            ble.broadcast();
             char ssid[16] = {0, };
             sprintf(ssid, "O2_%04hX", status.ssid);
+            ESP_LOGI(typename(this), "hostname : %s", ssid);
+            ESP_LOGI(typename(this), "ip : %s", WiFi.localIP().toString().c_str());
             MDNS.begin(ssid);
             ESP_LOGI(typename(this),"mDNS responder started");
             /*return index page which is stored in serverIndex */

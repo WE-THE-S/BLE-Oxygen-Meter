@@ -42,6 +42,11 @@ void setup() {
 	Serial2.begin(9600, SERIAL_8N1, SENSOR_RX_PIN, NOT_USED_PIN);
 	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
 	Serial2.setRxBufferSize(256);
+	if(status.OTAMode){
+		auto ota = OTA::getInstance();
+		ota->start();
+	}
+	
 	if (status.powerOn) {
 		status.waitFirstSensorData = 1;
 		status.waitSensorData = 1;

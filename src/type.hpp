@@ -93,6 +93,11 @@ typedef struct {
 
 	//LCD가 켜졋을때 깨어난 횟수
 	uint64_t lcdOnWakeupTimestamp;
+
+	uint8_t OTAMode : 1;
+	
+	uint8_t dummy : 1;
+	
 	//Alarm레벨
 	alarm_status_t alarmLevel;
 

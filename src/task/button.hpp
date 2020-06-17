@@ -11,6 +11,7 @@
 
 void IRAM_ATTR __function_handler() {
 	status.needLcdOn = 1;
+	status.OTAMode = 0;
 	status.lcdOnWakeupCount = status.wakeupCount;
 	static uint64_t lastHandle;
 	if((millis() - lastHandle) > 1){
@@ -26,6 +27,7 @@ void IRAM_ATTR __function_handler() {
 void IRAM_ATTR __power_handler() {
 	//어차피 꺼질때만 실행 될 것
 	status.needLcdOn = 1;
+	status.OTAMode = 0;
 	status.lcdOnWakeupCount = status.wakeupCount;
 	const uint64_t start = millis(); 
 	while(digitalRead(POWER_BUTTON_PIN) != LOW);
@@ -36,8 +38,7 @@ void IRAM_ATTR __power_handler() {
 	ESP_LOGI(TAG, "power pin pressed : %llums", time);
 	if(time >= POWER_FLAG_THRESHOLD){
 		if(!status.powerOn && time >= UPGRADE_FLAG_THRESHOLD){
-			auto ota = OTA::getInstance();
-			ota->start();
+			status.OTAMode = 1;
 		}
 		status.powerOn = !status.powerOn;
 		ESP_LOGI(TAG, "Power %s", status.powerOn ? "On" : "Off");
