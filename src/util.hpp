@@ -33,37 +33,10 @@ inline void sleep(uint64_t ms) {
 	esp_deep_sleep_start();
 }
 
-void updateCheck(){
-	const esp_partition_t* runningPartition = esp_ota_get_running_partition();
-	const esp_partition_t* factoryPartition = esp_partition_find_first(ESP_PARTITION_TYPE_APP, ESP_PARTITION_SUBTYPE_APP_FACTORY, "factory");
-	const esp_partition_t* otaPartition = esp_partition_find_first(ESP_PARTITION_TYPE_APP, ESP_PARTITION_SUBTYPE_APP_OTA_0, "ota_0");
-	
-	ESP_LOGI("update", "running partition : %u", runningPartition->address);
-	ESP_LOGI("update", "factory partition : %u", factoryPartition->address);
-	ESP_LOGI("update", "ota partition : %u", otaPartition->address);
-	if((runningPartition->address != factoryPartition->address) && (runningPartition->address == otaPartition->address)){
-		ESP_LOGI("update", "ota check!");
-		esp_partition_erase_range(factoryPartition, 0, factoryPartition->size);
-		uint32_t size = ESP.getFreeHeap() - 1024; //1024는 혹시 모를 여유분
-		ESP_LOGI("update", "buffer size : %u", size);
-		uint8_t* temp = new uint8_t[size];
-		for(uint32_t pos = 0;pos<otaPartition->size;pos += size){
-			auto copySize = min(size, otaPartition->size - pos);
-			ESP_LOGI("update", "copy %f%% -> move to %u bytes", ((float)pos /otaPartition->size) * 1000.0f, copySize);
-			esp_partition_read(otaPartition, pos, temp, copySize);
-			esp_partition_write(factoryPartition, pos, temp, copySize);
-		}			
-		delete[] temp;
-		ESP_LOGI("update", "ota firmware copy done");
-		esp_partition_erase_range(otaPartition, 0, otaPartition->size);
-		ESP_LOGI("update", "ota section clear");
-		esp_ota_set_boot_partition(factoryPartition);
-		ESP_LOGI("update", "setup next boot partition %s[%u]", factoryPartition->label, factoryPartition->address);
-		esp_restart();
-	}
-}
 void whyReset(){
-	ESP_LOGI("Version", "FW Version : %u", FIRMWARE_VERSION);
+	ESP_LOGI("Version", "FW Version : %s", FIRMWARE_ID);
+	const esp_partition_t* runningPartition = esp_ota_get_running_partition();
+	ESP_LOGI("Boot", "boot partition : %s [%u]", runningPartition->label, runningPartition->address);
 	switch(esp_reset_reason()){
 		case ESP_RST_BROWNOUT : {
 			status.powerOn = false;
