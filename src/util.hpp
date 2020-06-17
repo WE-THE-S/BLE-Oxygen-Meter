@@ -44,14 +44,21 @@ void updateCheck(){
 	if((runningPartition->address != factoryPartition->address) && (runningPartition->address == otaPartition->address)){
 		ESP_LOGI("update", "ota check!");
 		esp_partition_erase_range(factoryPartition, 0, factoryPartition->size);
-		const void *otaMmapPtr, *factoryMmapPtr;
-		spi_flash_mmap_handle_t otaMmapHandle, factoryMmapHandle;
-		esp_partition_mmap(otaPartition, 0, otaPartition->size, SPI_FLASH_MMAP_DATA, &otaMmapPtr, &otaMmapHandle);
-		esp_partition_mmap(factoryPartition, 0, factoryPartition->size, SPI_FLASH_MMAP_DATA, &factoryMmapPtr, &factoryMmapHandle);
-		memcpy(const_cast<void *>(factoryMmapPtr), otaMmapPtr, otaPartition->size);
-		spi_flash_munmap(otaMmapHandle);
-		spi_flash_munmap(factoryMmapHandle);
+		uint32_t size = ESP.getFreeHeap() - 1024; //1024는 혹시 모를 여유분
+		ESP_LOGI("update", "buffer size : %u", size);
+		uint8_t* temp = new uint8_t[size];
+		for(uint32_t pos = 0;pos<otaPartition->size;pos += size){
+			auto copySize = min(size, otaPartition->size - pos);
+			ESP_LOGI("update", "copy %f%% -> move to %u bytes", ((float)pos /otaPartition->size) * 1000.0f, copySize);
+			esp_partition_read(otaPartition, pos, temp, copySize);
+			esp_partition_write(factoryPartition, pos, temp, copySize);
+		}			
+		delete[] temp;
+		ESP_LOGI("update", "ota firmware copy done");
+		esp_partition_erase_range(otaPartition, 0, otaPartition->size);
+		ESP_LOGI("update", "ota section clear");
 		esp_ota_set_boot_partition(factoryPartition);
+		ESP_LOGI("update", "setup next boot partition %s[%u]", factoryPartition->label, factoryPartition->address);
 		esp_restart();
 	}
 }

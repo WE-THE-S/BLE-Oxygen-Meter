@@ -56,8 +56,14 @@ public:
 		char str[32] = {0, };
 		memset(str, 0x00, sizeof(char) * 32);
 		sprintf(str, "O2_%04hX", status.ssid);
+		auto ip = WiFi.localIP();
 		this->u8g2->drawStr((this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1, 48, str);
-		this->u8g2->drawStr((this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(WiFi.localIP().toString().c_str())) >> 1, 96, WiFi.localIP().toString().c_str());
+		memset(str, 0x00, sizeof(char) * 32);
+		sprintf(str, "%u.%u", ip[0], ip[1]);
+		this->u8g2->drawStr((this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1, 84, str);
+		memset(str, 0x00, sizeof(char) * 32);
+		sprintf(str, "%u.%u", ip[2], ip[3]);
+		this->u8g2->drawStr((this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1, 108, str);
 		this->u8g2->sendBuffer();
 	}
 

@@ -89,6 +89,7 @@ class OTA {
             sprintf(ssid, "O2_%04hX", status.ssid);
             ESP_LOGI(typename(this), "hostname : %s", ssid);
             ESP_LOGI(typename(this), "ip : %s", WiFi.localIP().toString().c_str());
+
             MDNS.begin(ssid);
             ESP_LOGI(typename(this),"mDNS responder started");
             /*return index page which is stored in serverIndex */
