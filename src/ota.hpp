@@ -9,6 +9,7 @@
 #include <ESPmDNS.h>
 #include <Update.h>
 
+#include "./lcd.hpp"
 #include "./config.hpp"
 #include "./type.hpp"
 #include "./ble.hpp"
@@ -84,8 +85,6 @@ class OTA {
         }
         
         void start(){
-            BLE ble;
-            ble.broadcast();
             char ssid[16] = {0, };
             sprintf(ssid, "O2_%04hX", status.ssid);
             ESP_LOGI(typename(this), "hostname : %s", ssid);

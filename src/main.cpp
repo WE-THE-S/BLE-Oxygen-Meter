@@ -43,10 +43,13 @@ void setup() {
 	Serial2.setTimeout(SENSOR_TIMEOUT * US_TO_S_FACTOR);
 	Serial2.setRxBufferSize(256);
 	if(status.OTAMode){
+		BLE ble;
+		ble.broadcast();
+		lcd.otaView();
 		auto ota = OTA::getInstance();
 		ota->start();
 	}
-	
+
 	if (status.powerOn) {
 		status.waitFirstSensorData = 1;
 		status.waitSensorData = 1;

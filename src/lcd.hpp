@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include "esp_bt_device.h"
+#include <WiFi.h>
 
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -40,6 +41,24 @@ public:
 		}
 		this->u8g2->clear();
 		this->u8g2->setPowerSave(!status.needLcdOn);
+	}
+
+	void otaView() {
+		if(!alreadyBegin){
+			begin();
+		}
+		this->u8g2->setPowerSave(0);
+		this->u8g2->setDrawColor(2);
+		this->u8g2->setFontMode(2);
+		this->u8g2->setFontDirection(0);
+		this->u8g2->clearBuffer();
+		this->u8g2->setFont(u8g2_font_profont22_tr);
+		char str[32] = {0, };
+		memset(str, 0x00, sizeof(char) * 32);
+		sprintf(str, "O2_%04hX", status.ssid);
+		this->u8g2->drawStr((this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(str)) >> 1, 48, str);
+		this->u8g2->drawStr((this->u8g2->getDisplayWidth() - this->u8g2->getStrWidth(WiFi.localIP().toString().c_str())) >> 1, 96, WiFi.localIP().toString().c_str());
+		this->u8g2->sendBuffer();
 	}
 
 	void print() {
