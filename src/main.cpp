@@ -20,6 +20,7 @@
 
 static pthread_t sensorThread;
 void setup() {
+	updateCheck();
 	ledcSetup(BUZZER_CHANNEL, BUZZER_FREQ, BUZZER_RESOLUTION);
 	ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
 	ledcWrite(BUZZER_CHANNEL, BUZZER_OFF);

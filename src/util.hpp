@@ -4,7 +4,8 @@
 #include <Arduino.h>
 #include <esp_task_wdt.h>
 #include <soc/rtc_cntl_reg.h>
-#include "esp_bt_device.h"
+#include <esp_bt_device.h>
+#include <esp_ota_ops.h>
 #include <inttypes.h>
 
 #include "./config.hpp"
@@ -32,6 +33,28 @@ inline void sleep(uint64_t ms) {
 	esp_deep_sleep_start();
 }
 
+void updateCheck(){
+	const esp_partition_t* runningPartition = esp_ota_get_running_partition();
+	const esp_partition_t* factoryPartition = esp_partition_find_first(ESP_PARTITION_TYPE_APP, ESP_PARTITION_SUBTYPE_APP_FACTORY, "factory");
+	const esp_partition_t* otaPartition = esp_partition_find_first(ESP_PARTITION_TYPE_APP, ESP_PARTITION_SUBTYPE_APP_OTA_0, "ota_0");
+	
+	ESP_LOGI("update", "running partition : %u", runningPartition->address);
+	ESP_LOGI("update", "factory partition : %u", factoryPartition->address);
+	ESP_LOGI("update", "ota partition : %u", otaPartition->address);
+	if((runningPartition->address != factoryPartition->address) && (runningPartition->address == otaPartition->address)){
+		ESP_LOGI("update", "ota check!");
+		esp_partition_erase_range(factoryPartition, 0, factoryPartition->size);
+		const void *otaMmapPtr, *factoryMmapPtr;
+		spi_flash_mmap_handle_t otaMmapHandle, factoryMmapHandle;
+		esp_partition_mmap(otaPartition, 0, otaPartition->size, SPI_FLASH_MMAP_DATA, &otaMmapPtr, &otaMmapHandle);
+		esp_partition_mmap(factoryPartition, 0, factoryPartition->size, SPI_FLASH_MMAP_DATA, &factoryMmapPtr, &factoryMmapHandle);
+		memcpy(const_cast<void *>(factoryMmapPtr), otaMmapPtr, otaPartition->size);
+		spi_flash_munmap(otaMmapHandle);
+		spi_flash_munmap(factoryMmapHandle);
+		esp_ota_set_boot_partition(factoryPartition);
+		esp_restart();
+	}
+}
 void whyReset(){
 	ESP_LOGI("Version", "FW Version : %u", FIRMWARE_VERSION);
 	switch(esp_reset_reason()){

@@ -14,5 +14,6 @@
         "*.tcc": "cpp",
         "memory": "cpp",
         "random": "cpp"
-    }
+    },
+    "files.encoding": "utf8"
 }

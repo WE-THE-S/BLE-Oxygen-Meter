@@ -104,21 +104,21 @@ class OTA {
             }, []() {
                 HTTPUpload& upload = OTA::getInstance()->server->upload();
                 if (upload.status == UPLOAD_FILE_START) {
-                ESP_LOGI("ota", "Update: %s\n", upload.filename.c_str());
-                if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
-                    Update.printError(Serial);
-                }
+                    ESP_LOGI("ota", "Update: %s\n", upload.filename.c_str());
+                    if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+                        Update.printError(Serial);
+                    }
                 } else if (upload.status == UPLOAD_FILE_WRITE) {
-                /* flashing firmware to ESP*/
-                if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-                    Update.printError(Serial);
-                }
+                    /* flashing firmware to ESP*/
+                    if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+                        Update.printError(Serial);
+                    }
                 } else if (upload.status == UPLOAD_FILE_END) {
-                if (Update.end(true)) { //true to set the size to the current progress
-                    ESP_LOGI("ota", "Update Success: %u\nRebooting...\n", upload.totalSize);
-                } else {
-                    Update.printError(Serial);
-                }
+                    if (Update.end(true)) { //true to set the size to the current progress
+                        ESP_LOGI("ota", "Update Success: %u\nRebooting...\n", upload.totalSize);
+                    } else {
+                        Update.printError(Serial);
+                    }
                 }
             });
             this->server->begin();
