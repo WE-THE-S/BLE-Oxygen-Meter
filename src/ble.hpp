@@ -10,8 +10,8 @@
 #include "esp_bt_main.h"
 #include "esp_gap_ble_api.h"
 #include "esp_gatts_api.h"
-#include <soc/rtc_cntl_reg.h>
 #include "esp_wifi.h"
+#include <soc/rtc_cntl_reg.h>
 
 static esp_ble_adv_data_t adv_config = {
 	.set_scan_rsp = false,
@@ -45,9 +45,9 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 		case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT: {
 			const uint8_t *point = esp_bt_dev_get_address();
 			char str[32];
-			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", 
-						(int)point[0], (int)point[1], (int)point[2], 
-						(int)point[3], (int)point[4], (int)point[5]);
+			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X",
+					(int)point[0], (int)point[1], (int)point[2],
+					(int)point[3], (int)point[4], (int)point[5]);
 			ESP_LOGI("BT Address", "%s", str);
 			ESP_LOGD(TAG, "ADV Update");
 			ESP_ERROR_CHECK(esp_ble_gap_start_advertising(&adv_param));
@@ -56,28 +56,30 @@ static void gap_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *pa
 		default:
 			break;
 	}
-}//30:AE:A4:C6:F4:6A
+} //30:AE:A4:C6:F4:6A
 class BLE {
 private:
 	//9A99D541 B81E9341 01 00B2 00F7
 	const char *TAG = "BLE";
 	bool alreadyInit;
 
-	esp_err_t setName(){
-		char str[32] = {0, };
+	esp_err_t setName() {
+		char str[32] = {
+			0,
+		};
 		sprintf(str, "O2 (%04hX)", status.ssid);
 		ESP_LOGI(TAG, "SSID : %s", str);
 		return esp_ble_gap_set_device_name(str);
-		
 	}
+
 public:
 	BLE() : alreadyInit(false) {
 	}
-	
+
 	void begin() {
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 	}
-	
+
 	esp_err_t broadcast() {
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		if (!alreadyInit) {
@@ -104,12 +106,10 @@ public:
 				}
 			}
 			ESP_LOGD(TAG, "BT Enable");
-			const uint8_t *addr = esp_bt_dev_get_address();
-			status.ssid = 0x0;
-			for(uint8_t i = 0;i<3;i++){
-				uint16_t value = (static_cast<uint16_t>(addr[i]) << 8) + addr[i + 1];
-				status.ssid ^= value;
-			}
+			const uint64_t mac = ESP.getEfuseMac();
+			const uint8_t* address = esp_bt_dev_get_address();
+			const uint16_t value = (static_cast<uint16_t>(address[4]) << 8) + address[5];
+			status.ssid = (static_cast<uint16_t>(mac) ^ value);
 			ESP_ERROR_CHECK(this->setName());
 			ESP_ERROR_CHECK(esp_ble_gap_register_callback(gap_handler));
 			alreadyInit = true;
@@ -131,7 +131,7 @@ public:
 		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 		ESP_LOGD(TAG, "BT Update");
 		//데이터 설정
-		auto raw = const_cast<sensor_t*>(sensor);
+		auto raw = const_cast<sensor_t *>(sensor);
 		adv_config.p_manufacturer_data = raw->bytes;
 		adv_config.manufacturer_len = 13;
 
