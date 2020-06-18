@@ -34,9 +34,10 @@ inline void sleep(uint64_t ms) {
 }
 
 void whyReset(){
-	ESP_LOGI("Version", "FW Version : %s", FIRMWARE_ID);
 	const esp_partition_t* runningPartition = esp_ota_get_running_partition();
+	ESP_LOGI("Version", "FW Version : %s", FIRMWARE_ID);
 	ESP_LOGI("Boot", "boot partition : %s [%u]", runningPartition->label, runningPartition->address);
+	
 	switch(esp_reset_reason()){
 		case ESP_RST_BROWNOUT : {
 			status.powerOn = false;
